@@ -4,6 +4,8 @@ import { MaytrixXCommand } from "./MaytrixXCommand";
 import { load as loadCommands } from "./CommandHandler";
 import { load as loadEvents} from "./EventHandler";
 import { MaytrixXEvent } from "./MaytrixXEvent";
+import { Moment } from "moment";
+import moment = require("moment");
 export class MaytrixXClient extends Client
 {
     private readonly _config : MaytrixXConfig;
@@ -33,6 +35,13 @@ export class MaytrixXClient extends Client
                 event.run(...args);
             });
         });
+    }
+
+    getUptime()
+    {
+        const duration = moment.duration(this.uptime?.valueOf()).humanize();
+
+        return duration;
     }
 
     restart() : Promise<void>
