@@ -1,0 +1,26 @@
+{
+  "name": "discordbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "ts:watch": "tsc -w",
+    "ts:build": "tsc",
+    "serve": "nodemon dist/main.js",
+    "watch": "concurrently \"npm run ts:watch\" \"npm run serve\"",
+    "build": "npm run ts:build",
+    "prod:serve": "node dist/main.js",
+    "start": "npm run build && npm run prod:serve",
+    "tslint": "tslint -c tsconfig.json -p tsconfig.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^13.11.0",
+    "@types/typescript": "^2.0.0",
+    "discord.js": "^12.1.1",
+    "dotenv": "^8.2.0",
+    "node": "^13.12.0",
+    "nodemon": "^2.0.2"
+  }
+}

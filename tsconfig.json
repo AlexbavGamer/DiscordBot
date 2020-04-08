@@ -1,0 +1,19 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "CommonJS",
+        "removeComments": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "noImplicitThis": true,
+        "outDir": "dist",
+        "pretty": true,
+    },
+    "include": [
+        "src", "module.d.ts"
+    ],
+    "exclude": [
+        "dist"
+    ]
+}
