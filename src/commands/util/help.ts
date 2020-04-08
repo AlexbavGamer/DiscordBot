@@ -8,7 +8,7 @@ class HelpCommand extends MaytrixXCommand
     {
         super(client, {
             name: "help",
-            category: "info",
+            category: "util",
             permission: ["SEND_MESSAGES"]
         });
     }

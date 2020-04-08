@@ -27,9 +27,24 @@ class MessageEvent extends MaytrixXEvent
             command = this.client.commands.get(cmd)!;
         }
 
-        if(command! && message.member!.hasPermission(command!.conf.permission))
+        if(command!)
         {
-            command!.run(message, ...args);
+            if(command!.conf.permission)
+            {
+                if(message.member!.hasPermission(command!.conf.permission))
+                {
+                    command!.run(message, ...args);
+                }
+            }
+    
+            else if(command! && message.member!.hasPermission(command!.conf.permission))
+            {
+                command!.run(message, ...args);
+            }
+        }
+        else
+        {
+            message.channel.send("comando invalido!");
         }
     }
 }

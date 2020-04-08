@@ -17,10 +17,12 @@ const load = (client : MaytrixXClient) : Map<string, MaytrixXCommand> => {
         for(let file of commandFiles)
         {
             const filePath = path.resolve(`${__dirname}/../commands/${folder}/${file}`);
+            console.log(filePath);
             const pull = require(filePath);
             const cmd = new pull(client) as MaytrixXCommand;
 
             cmds.set(cmd.conf.name, cmd);
+            delete require.cache[filePath];
         }
     });
 

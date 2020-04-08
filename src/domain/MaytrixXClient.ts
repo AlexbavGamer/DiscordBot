@@ -4,8 +4,8 @@ import { MaytrixXCommand } from "./MaytrixXCommand";
 import { load as loadCommands } from "./CommandHandler";
 import { load as loadEvents} from "./EventHandler";
 import { MaytrixXEvent } from "./MaytrixXEvent";
-import { Moment } from "moment";
-import moment = require("moment");
+import * as moment from "moment";
+import 'moment/locale/pt-br';
 export class MaytrixXClient extends Client
 {
     private readonly _config : MaytrixXConfig;
@@ -25,6 +25,7 @@ export class MaytrixXClient extends Client
     constructor(token : string, config : MaytrixXConfig)
     {
         super();
+        moment.defineLocale("pt-BR", {});
         this.login(token!);
         this._commands = loadCommands(this);
         this._events = loadEvents(this);
@@ -39,9 +40,23 @@ export class MaytrixXClient extends Client
 
     getUptime()
     {
-        const duration = moment.duration(this.uptime?.valueOf()).humanize();
+        let uptime = process.uptime();
+        const date = new Date(uptime*1000);
+        const days = date.getUTCDate() - 1,
+              hours = date.getUTCHours(),
+              minutes = date.getUTCMinutes(),
+              seconds = date.getUTCSeconds(),
+              milliseconds = date.getUTCMilliseconds();
 
-        return duration;
+        let segments = [];
+
+        if (days > 0) segments.push(days + ' dia' + ((days == 1) ? '' : 's'));
+        if (hours > 0) segments.push(hours + ' hora' + ((hours == 1) ? '' : 's'));
+        if (minutes > 0) segments.push(minutes + ' minuto' + ((minutes == 1) ? '' : 's'));
+        if (seconds > 0) segments.push(seconds + ' segundo' + ((seconds == 1) ? '' : 's'));
+        if (milliseconds > 0) segments.push(milliseconds + ' milissegundo' + ((seconds == 1) ? '' : 's'));
+        const dateString = segments.join(', ');
+        return dateString;
     }
 
     restart() : Promise<void>
