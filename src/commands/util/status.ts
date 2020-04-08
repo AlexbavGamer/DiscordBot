@@ -20,11 +20,11 @@ class UptimeCommand extends MaytrixXCommand
             .setTitle("** = ESTATISTICAS = **")
             .addField("**Uso da Memoria ::**", `**${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB**`)
             .addField("**Tempo Online**", `**${this.client.getUptime()}**`)
-            .addField("**Tempo de Conexão**", "**PONG**");
+            .addField("**PING**", "**PONG**");
 
         message.channel.send(embed).then(embedMessage => 
         {
-            embed.fields[2].value = (embedMessage.createdTimestamp - message.createdTimestamp) + "ms";
+            embed.fields[2].value = `**${(embedMessage.createdTimestamp - message.createdTimestamp)}ms**`;
             embedMessage.edit(embed);
         });;
     }
