@@ -19,3 +19,5 @@ class UptimeCommand extends MaytrixXCommand
         message.channel.send(`Estou online há ${this.client.getUptime()}`);
     }
 }
+
+export = UptimeCommand;
