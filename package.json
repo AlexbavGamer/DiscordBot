@@ -9,7 +9,7 @@
     "serve": "nodemon dist/main.js",
     "watch": "concurrently \"npm run ts:watch\" \"npm run serve\"",
     "build": "npm run ts:build",
-    "prod:serve": "node dist/main.js",
+    "prod:serve": "nodemon dist/main.js",
     "start": "npm run build && npm run prod:serve",
     "tslint": "tslint -c tsconfig.json -p tsconfig.json"
   },

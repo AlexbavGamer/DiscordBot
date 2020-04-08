@@ -9,6 +9,7 @@ export interface CommandConfig
     description?: string;
     category: string;
     permission: PermissionResolvable;
+    ownerOnly?: boolean;
 }
 
 export abstract class MaytrixXCommand {
