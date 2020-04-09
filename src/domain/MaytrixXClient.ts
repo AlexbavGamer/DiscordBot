@@ -1,5 +1,5 @@
 import { Client, ClientEvents, Guild, Message } from "discord.js";
-import { MaytrixXConfig } from "./MaytrixXConfig";
+import { MaytrixXConfig, MaytrixXDefaultSettings } from "./MaytrixXConfig";
 import { MaytrixXCommand } from "./MaytrixXCommand";
 import { load as loadCommands } from "./CommandHandler";
 import { load as loadEvents} from "./EventHandler";
@@ -55,8 +55,13 @@ export class MaytrixXClient extends Client
         });
         this._events = loadEvents(this);
         this._config = config;
+        this.generateInvite("ADMINISTRATOR").then(inviteLink => 
+        {
+            this._config.inviteLink = inviteLink;
+        });
         this._settings = new Enmap({
-            name: "settings"
+            name: "settings",
+            cloneLevel: "deep",
         });
         this._events.forEach((event, name) => {
             this.on(<any>name,(...args : Array<any>) => {
@@ -65,10 +70,25 @@ export class MaytrixXClient extends Client
         });
 
         this._levelCache = new Map();
-        for(let i = 0; i < this.config.permLevels.length; i++)
+        for(let i = 0; i < this.config.permLevels!.length; i++)
         {
             const thisLevel = this.config.permLevels[i];
             this._levelCache.set(thisLevel.name, thisLevel.level);
+        }
+    }
+
+    async awaitReply(message : Message, question : string, limit : number = 60000) : Promise<string | boolean>
+    {
+        const filter = (m : Message) => m.author.id == message.author.id;
+        await message.channel.send(question);
+        try
+        {
+            const collected = await message.channel.awaitMessages(filter, {max : 1, time: limit, errors: ["time"]});
+            return collected.first()?.content!;
+        }
+        catch(e)
+        {
+            return false;
         }
     }
 
@@ -81,7 +101,7 @@ export class MaytrixXClient extends Client
         {
             const currentLevel = permOrder.shift();
             if(message.guild && currentLevel?.guildOnly) continue;
-            if(currentLevel?.check(message))
+            if(currentLevel?.check(message, this))
             {
                 permlvl = currentLevel.level;
                 break;
@@ -91,7 +111,7 @@ export class MaytrixXClient extends Client
         return permlvl;
     }
 
-    getSettings(guild : Guild) : MaytrixXConfig
+    getSettings(guild : Guild) : MaytrixXDefaultSettings
     {
         this.settings.ensure("default", {
             "prefix": "!",

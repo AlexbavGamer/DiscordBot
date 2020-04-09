@@ -1,11 +1,11 @@
 import { MaytrixXClient } from "./domain/MaytrixXClient";
 import { config } from "dotenv";
-import { MaytrixXConfig } from "./domain/MaytrixXConfig";
+import { MaytrixXConfig, config as BotConfig } from "./domain/MaytrixXConfig";
 import * as express from "express";
 import { MaytrixXWebPanel } from "./domain/MaytrixXWebPanel";
+import path = require("path");
+import { join, resolve } from "path";
 config({path: __dirname + "/../src/.env"});
-
-let cfg = require("../src/bot.json") as MaytrixXConfig;
 
 declare global
 {
@@ -18,4 +18,4 @@ declare global
     }
 }
 
-global.__BOT__ = new MaytrixXClient(process.env.BOT_TOKEN!, cfg);
+global.__BOT__ = new MaytrixXClient(process.env.BOT_TOKEN!, <MaytrixXConfig>BotConfig);

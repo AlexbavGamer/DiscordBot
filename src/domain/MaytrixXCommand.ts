@@ -31,6 +31,4 @@ export abstract class MaytrixXCommand {
         this._client = client;
         this._conf = conf;
     }
-
-    abstract run(message : Message, level : number, ...args : Array<string>) : void;
 }

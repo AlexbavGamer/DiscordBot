@@ -8,7 +8,7 @@ class RestartCommand extends MaytrixXCommand
     {
         super(client, {
             name: "restart",
-            category: "admin",
+            category: "owner",
             permLevel: "Bot Owner"
         });
     }

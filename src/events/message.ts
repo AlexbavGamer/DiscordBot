@@ -2,6 +2,7 @@ import { MaytrixXEvent } from "../domain/MaytrixXEvent";
 import { MaytrixXClient } from "../domain/MaytrixXClient";
 import { Message } from "discord.js";
 import { MaytrixXCommand } from "../domain/MaytrixXCommand";
+import { inspect } from "util";
 
 class MessageEvent extends MaytrixXEvent
 {
@@ -16,15 +17,14 @@ class MessageEvent extends MaytrixXEvent
 
        const settings = this.client.getSettings(message!.guild!);
 
-       const prefixMention = new RegExp(`^!?${this.client.user?.id}>( |)$`);
+       const prefixMention = new RegExp(`^<@!?${this.client.user?.id}>( |)$`);
        if(message.content.match(prefixMention))
        {
-           return message.reply(`Meu prefixo nesse servidor é ${settings.defaultSettings.prefix}`);
+            return message.reply(`Meu prefixo nesse servidor é ${settings.prefix}`);
        }
-
-       if(message.content.indexOf(settings.defaultSettings.prefix) !== 0) return;
+       if(message.content.indexOf(settings.prefix) !== 0) return;
        
-       const args = message.content.slice(settings.defaultSettings.prefix.length).trim().split(/ +/g);
+       const args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
        const command = args.shift()!.toLowerCase();
 
        if(message.guild && !message.member) await message.guild!.members.fetch({
@@ -43,7 +43,7 @@ class MessageEvent extends MaytrixXEvent
 
        if(level < this.client.levelCache.get(cmd.conf.permLevel)!)
        {
-            if(settings.defaultSettings.systemNotice)
+            if(settings.systemNotice)
             {
                 return message.channel.send(`You do not have permission to use this command.
                 You permission level is ${level} (${this.client.config.permLevels.find(l => l.level == level)?.name}) This command requires level 
@@ -60,7 +60,7 @@ class MessageEvent extends MaytrixXEvent
            flags.push(args.shift()?.slice(1));
        }
        message.flags.serialize(flags);
-       cmd.run(message, level, ...args);
+       (<any>cmd).run(message, level, args);
     }
 }
 

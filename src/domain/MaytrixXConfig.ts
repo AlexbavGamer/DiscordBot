@@ -9,29 +9,33 @@ interface PermLevel
     check: (message?: Message, client?: MaytrixXClient) => boolean;
 }
 
+interface MaytrixXDefaultSettings
+{
+    prefix: string;
+    modLogChannel: string;
+    modRole: string;
+    adminRole: string;
+    systemNotice: boolean;
+    welcomeChannel: string;
+    welcomeMessage: string;
+    welcomeEnabled: boolean;
+}
+
 interface MaytrixXConfig
 {
     ownerID: string;
+    inviteLink: string;
     admins: string[];
     support: string[],
     token: string;
-    defaultSettings:
-    {
-        prefix: string;
-        modLogChannel: string;
-        modRole: string;
-        adminRole: string;
-        systemNotice: boolean;
-        welcomeChannel: string;
-        welcomeMessage: string;
-        welcomeEnabled: boolean;
-    },
+    defaultSettings: MaytrixXDefaultSettings;
     permLevels: PermLevel[]
 }
 
 const config = <MaytrixXConfig>
 {
     ownerID: "203936190133436416",
+    inviteLink: "",
     admins: [],
     support: [],
     token: "",
@@ -59,7 +63,7 @@ const config = <MaytrixXConfig>
             check: (message, client) => {
                 try
                 {
-                    const modRole = message?.guild!.roles.cache.find(r => r.name.toLowerCase() == client?.getSettings(message!.guild!).defaultSettings.modRole);
+                    const modRole = message?.guild!.roles.cache.find(r => r.name.toLowerCase() == client?.getSettings(message!.guild!).modRole);
                     return (modRole && message?.member?.roles.cache.has(modRole.id));
                 }
                 catch
@@ -74,7 +78,7 @@ const config = <MaytrixXConfig>
             check: (message, client) => {
                 try
                 {
-                    const modRole = message?.guild!.roles.cache.find(r => r.name.toLowerCase() == client?.getSettings(message!.guild!).defaultSettings.adminRole);
+                    const modRole = message?.guild!.roles.cache.find(r => r.name.toLowerCase() == client?.getSettings(message!.guild!).adminRole);
                     return (modRole && message?.member?.roles.cache.has(modRole.id));
                 }
                 catch
@@ -100,9 +104,12 @@ const config = <MaytrixXConfig>
         {
             level: 10,
             name: "Bot Owner",
-            check: (message, client) => client?.config.ownerID == message?.author.id
+            check: (message, client) => 
+            {
+                return client?.config.ownerID == message?.author.id;
+            }
         }
     ]
 };
 
-export { config, MaytrixXConfig };
+export { config, MaytrixXConfig, MaytrixXDefaultSettings };

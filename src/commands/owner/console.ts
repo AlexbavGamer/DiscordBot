@@ -8,7 +8,7 @@ class ConsoleCommand extends MaytrixXCommand
     {
         super(client, {
             name: 'console',
-            category: 'admin',
+            category: 'owner',
             permLevel: "Bot Owner",
         });
     }
