@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:slim
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /usr/src/app/node_modules && chown -R node:node /usr/src/app
 WORKDIR /usr/src/app
@@ -8,4 +8,4 @@ RUN npm install
 COPY . /usr/src/app
 USER node
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD  ["npm", "start"]

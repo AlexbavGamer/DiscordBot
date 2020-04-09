@@ -36,6 +36,16 @@ class MessageEvent extends MaytrixXEvent
                     command!.run(message, ...args);
                 }
             }
+
+            else if(command!.conf.ownerOnly)
+            {
+                let isOwner = (message.author.id == this.client.config.ownerId);
+
+                if(isOwner)
+                {
+                    command!.run(message, ...args);
+                }
+            }
     
             else if(command! && message.member!.hasPermission(command!.conf.permission))
             {
