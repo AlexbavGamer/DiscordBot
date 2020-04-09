@@ -35,3 +35,5 @@ class ConsoleCommand extends MaytrixXCommand
         }
     }
 }
+
+export = ConsoleCommand;
