@@ -3,6 +3,7 @@ RUN mkdir -p /usr/src/app
 RUN mkdir -p /usr/src/app/node_modules && chown -R node:node /usr/src/app
 WORKDIR /usr/src/app
 COPY package.json /usr/src/app
+RUN add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main universe"
 RUN apt-get update || : && apt-get install build-essential checkinstall
 RUN apt-get update || : && apt-get install python -y
 RUN npm install -g typescript
