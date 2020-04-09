@@ -3,7 +3,7 @@ RUN mkdir -p /usr/src/app
 RUN mkdir -p /usr/src/app/node_modules && chown -R node:node /usr/src/app
 WORKDIR /usr/src/app
 COPY package.json /usr/src/app
-RUN apt-get install build-essential
+RUN apt-get update || : && apt-get install build-essential
 RUN apt-get update || : && apt-get install python -y
 RUN npm install -g typescript
 RUN npm install
