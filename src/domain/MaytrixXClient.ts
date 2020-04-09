@@ -1,4 +1,4 @@
-import { Client, ClientEvents } from "discord.js";
+import { Client, ClientEvents, Guild, Message } from "discord.js";
 import { MaytrixXConfig } from "./MaytrixXConfig";
 import { MaytrixXCommand } from "./MaytrixXCommand";
 import { load as loadCommands } from "./CommandHandler";
@@ -6,15 +6,34 @@ import { load as loadEvents} from "./EventHandler";
 import { MaytrixXEvent } from "./MaytrixXEvent";
 import * as moment from "moment";
 import 'moment/locale/pt-br';
+import Enmap = require('enmap');
 export class MaytrixXClient extends Client
 {
     private readonly _config : MaytrixXConfig;
     private readonly _commands : Map<string, MaytrixXCommand>;
+    private readonly _aliases : Map<string, string>;
     private readonly _events : Map<string, MaytrixXEvent>;
+    private readonly _settings : Enmap;
+    private readonly _levelCache : Map<string, number>;
+
+    public get levelCache()
+    {
+        return this._levelCache;
+    }
 
     public get config()
     {
         return this._config;
+    }
+
+    public get aliases()
+    {
+        return this._aliases;
+    }
+
+    public get settings()
+    {
+        return this._settings;
     }
 
     public get commands()
@@ -28,14 +47,66 @@ export class MaytrixXClient extends Client
         moment.defineLocale("pt-BR", {});
         this.login(token!);
         this._commands = loadCommands(this);
+        this._aliases = new Map();
+        this._commands.forEach((cmd) => {
+            cmd.conf.aliases?.forEach((alias) => {
+                this._aliases.set(alias, cmd.conf.name);
+            });
+        });
         this._events = loadEvents(this);
         this._config = config;
-
+        this._settings = new Enmap({
+            name: "settings"
+        });
         this._events.forEach((event, name) => {
             this.on(<any>name,(...args : Array<any>) => {
                 event.run(...args);
             });
         });
+
+        this._levelCache = new Map();
+        for(let i = 0; i < this.config.permLevels.length; i++)
+        {
+            const thisLevel = this.config.permLevels[i];
+            this._levelCache.set(thisLevel.name, thisLevel.level);
+        }
+    }
+
+    permLevel(message : Message)
+    {
+        let permlvl = 0;
+
+        const permOrder = this.config.permLevels.slice(0).sort((p,c) => p.level < c.level ? 1 : -1);
+        while(permOrder.length)
+        {
+            const currentLevel = permOrder.shift();
+            if(message.guild && currentLevel?.guildOnly) continue;
+            if(currentLevel?.check(message))
+            {
+                permlvl = currentLevel.level;
+                break;
+            }
+        }
+
+        return permlvl;
+    }
+
+    getSettings(guild : Guild) : MaytrixXConfig
+    {
+        this.settings.ensure("default", {
+            "prefix": "!",
+            "modLogChannel": "mod-log",
+            "modRole": "Moderator",
+            "adminRole": "Administrator",
+            "systemNotice": "true",
+            "welcomeChannel": "welcome",
+            "welcomeMessage": "Say hello to {{user}}, everyone! We all need a warm welcome sometimes :D",
+            "welcomeEnabled": "false"
+        });
+
+        if(!guild) return this.settings.get("default");
+        const guildConf = this.settings.get(guild.id) || {};
+        return ({...this.settings.get("default"), ...guildConf});
     }
 
     getUptime()

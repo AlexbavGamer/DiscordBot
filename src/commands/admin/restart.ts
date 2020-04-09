@@ -9,11 +9,11 @@ class RestartCommand extends MaytrixXCommand
         super(client, {
             name: "restart",
             category: "admin",
-            permission: []
+            permLevel: "Bot Owner"
         });
     }
 
-    run(message : Message, ...args : Array<string>)
+    run(message : Message, level : number, ...args : Array<string>)
     {
         message.channel.send("Bot reiniciando! ...").then((m) => {
             setTimeout(() => {

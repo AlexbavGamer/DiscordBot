@@ -9,12 +9,11 @@ class ConsoleCommand extends MaytrixXCommand
         super(client, {
             name: 'console',
             category: 'admin',
-            permission: "ADMINISTRATOR",
-            ownerOnly: true,
+            permLevel: "Bot Owner",
         });
     }
 
-    run(message : Message, ...args : Array<string>)
+    run(message : Message, level : number, ...args : Array<string>)
     {
         const consoleArgs = args.join(" ");
         try

@@ -9,11 +9,11 @@ class ShutdownCommand extends MaytrixXCommand
         super(client, {
             name: "shutdown",
             category: "admin",
-            permission: ["ADMINISTRATOR"]
+            permLevel: "Bot Owner",
         });
     }
 
-    run(message : Message, ...args : Array<string>)
+    run(message : Message, level : number, ...args : Array<string>)
     {
         this.client.destroy();
     }

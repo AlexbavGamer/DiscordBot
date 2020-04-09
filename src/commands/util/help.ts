@@ -9,11 +9,11 @@ class HelpCommand extends MaytrixXCommand
         super(client, {
             name: "help",
             category: "util",
-            permission: ["SEND_MESSAGES"]
+            permLevel: "User"
         });
     }
 
-    run(message : Message, ...args : Array<string>)
+    run(message : Message, level : number, ...args : Array<string>)
     {
         message.channel.send(`Olá <@${message.author.id}> !`);
     }

@@ -8,8 +8,8 @@ export interface CommandConfig
     usage?: string;
     description?: string;
     category: string;
-    permission: PermissionResolvable;
-    ownerOnly?: boolean;
+    permLevel: string;
+    guildOnly?: boolean;
 }
 
 export abstract class MaytrixXCommand {
@@ -32,5 +32,5 @@ export abstract class MaytrixXCommand {
         this._conf = conf;
     }
 
-    abstract run(message : Message, ...args : Array<string>) : void;
+    abstract run(message : Message, level : number, ...args : Array<string>) : void;
 }

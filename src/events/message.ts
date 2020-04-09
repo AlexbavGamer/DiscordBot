@@ -10,52 +10,57 @@ class MessageEvent extends MaytrixXEvent
         super(client);
     }
 
-    run(message : Message)
+    async run(message : Message)
     {
-        if(!message.content.startsWith(this.client.config.prefix)) return;
-        if(message.author.bot) return;
+       if(message.author.bot) return;
 
-        const args : Array<string> = message.content.slice(this.client.config.prefix.length).trim().split(/ +/g);
-        const cmd : string = args.shift()!.toLowerCase();
-        
-        let command : MaytrixXCommand;
+       const settings = this.client.getSettings(message!.guild!);
 
-        if(cmd.length == 0) return;
+       const prefixMention = new RegExp(`^!?${this.client.user?.id}>( |)$`);
+       if(message.content.match(prefixMention))
+       {
+           return message.reply(`Meu prefixo nesse servidor é ${settings.defaultSettings.prefix}`);
+       }
 
-        if(this.client.commands.has(cmd))
-        {
-            command = this.client.commands.get(cmd)!;
-        }
+       if(message.content.indexOf(settings.defaultSettings.prefix) !== 0) return;
+       
+       const args = message.content.slice(settings.defaultSettings.prefix.length).trim().split(/ +/g);
+       const command = args.shift()!.toLowerCase();
 
-        if(command!)
-        {
-            if(command!.conf.permission)
+       if(message.guild && !message.member) await message.guild!.members.fetch({
+           user: message.author
+       });
+
+       const level = this.client.permLevel(message);
+
+       const cmd = this.client.commands.get(command) || this.client.commands.get(this.client.aliases.get(command)!);
+       if(!cmd) return;
+
+       if(cmd && !message.guild && cmd.conf.guildOnly)
+       {
+           return message.channel.send(`This command is unavailable via private message. Please run this command in a guild.`);
+       }
+
+       if(level < this.client.levelCache.get(cmd.conf.permLevel)!)
+       {
+            if(settings.defaultSettings.systemNotice)
             {
-                if(message.member!.hasPermission(command!.conf.permission))
-                {
-                    command!.run(message, ...args);
-                }
+                return message.channel.send(`You do not have permission to use this command.
+                You permission level is ${level} (${this.client.config.permLevels.find(l => l.level == level)?.name}) This command requires level 
+                ${this.client.levelCache.get(cmd.conf.permLevel)} (${cmd.conf.permLevel})`);
             }
+            else{
+                return;
+            }
+       }
 
-            else if(command!.conf.ownerOnly)
-            {
-                let isOwner = (message.author.id == this.client.config.ownerId);
-
-                if(isOwner)
-                {
-                    command!.run(message, ...args);
-                }
-            }
-    
-            else if(command! && message.member!.hasPermission(command!.conf.permission))
-            {
-                command!.run(message, ...args);
-            }
-        }
-        else
-        {
-            message.channel.send("comando invalido!");
-        }
+       let flags = [];
+       while(args[0] && args[0][0] === "-")
+       {
+           flags.push(args.shift()?.slice(1));
+       }
+       message.flags.serialize(flags);
+       cmd.run(message, level, ...args);
     }
 }
 
