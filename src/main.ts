@@ -1,14 +1,21 @@
 import { MaytrixXClient } from "./domain/MaytrixXClient";
 import { config } from "dotenv";
 import { MaytrixXConfig } from "./domain/MaytrixXConfig";
-
-if(process.env.NODE_ENV && process.env.NODE_ENV !== "production")
-{
-    config({path: __dirname + "/../src/.env"});
-}
+import * as express from "express";
+import { MaytrixXWebPanel } from "./domain/MaytrixXWebPanel";
+config({path: __dirname + "/../src/.env"});
 
 let cfg = require("../src/bot.json") as MaytrixXConfig;
 
-const client : MaytrixXClient = new MaytrixXClient(process.env.BOT_TOKEN!, cfg);
+declare global
+{
+    namespace NodeJS{
+        interface Global
+        {
+            __BOT__ : MaytrixXClient;
+            __BOT_WEBPANEL__ : MaytrixXWebPanel
+        }
+    }
+}
 
-console.log(process.env.NODE_ENV);
+global.__BOT__ = new MaytrixXClient(process.env.BOT_TOKEN!, cfg);
