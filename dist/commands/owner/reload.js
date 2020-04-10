@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
 class ReloadCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
@@ -35,3 +34,4 @@ class ReloadCommand extends MaytrixXCommand_1.MaytrixXCommand {
         });
     }
 }
+module.exports = ReloadCommand;
