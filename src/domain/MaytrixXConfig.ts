@@ -55,9 +55,9 @@ const config = <MaytrixXConfig>
     dashboard:
     {
         oauthSecret: "Ka5eH12y0KWK9kst5uSG4RDzcJCQ2lsu",
-        callbackURL: "https://maytrixxbot.herokuapp.com/callback",
+        callbackURL: "https://maytrixxbot.glitch.me/callback",
         sessionSecret: "Afag2154",
-        domain: "https://maytrixxbot.herokuapp.com/",
+        domain: "https://maytrixxbot.glitch.me/",
         port: "3000"
     },
     defaultSettings:
