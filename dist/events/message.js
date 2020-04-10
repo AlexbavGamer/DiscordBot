@@ -9,12 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const MaytrixXEvent_1 = require("../domain/MaytrixXEvent");
+const discord_js_1 = require("discord.js");
 class MessageEvent extends MaytrixXEvent_1.MaytrixXEvent {
     constructor(client) {
         super(client);
     }
     run(message) {
-        var _a, _b, _c;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             if (this.client.isWebSetup)
                 return;
@@ -50,9 +51,13 @@ class MessageEvent extends MaytrixXEvent_1.MaytrixXEvent {
                     return;
                 }
             }
+            message.flags.toArray().forEach(flag => {
+                message.flags.remove(flag);
+            });
             let flags = [];
             while (args[0] && args[0][0] === "-") {
-                flags.push((_c = args.shift()) === null || _c === void 0 ? void 0 : _c.slice(1));
+                let bit = new discord_js_1.BitField(args.shift().slice(1));
+                flags.push(bit);
             }
             message.flags.serialize(flags);
             cmd.run(message, level, args);
