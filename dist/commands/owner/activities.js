@@ -53,7 +53,7 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
                     {
                         let output = `= Activities List =\n\n\n`;
                         (_b = this.client.config.activities) === null || _b === void 0 ? void 0 : _b.forEach((value, index) => __awaiter(this, void 0, void 0, function* () {
-                            output += `${value} == ${index}`;
+                            output += `${value} == ${index}\n`;
                         }));
                         message.channel.send(output, { code: "asciidoc" });
                         break;
