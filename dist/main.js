@@ -4,6 +4,9 @@ const MaytrixXClient_1 = require("./domain/MaytrixXClient");
 const dotenv_1 = require("dotenv");
 const MaytrixXConfig_1 = require("./domain/MaytrixXConfig");
 dotenv_1.config({ path: __dirname + "/../src/.env" });
+String.prototype.replaceAll = function (find, replace) {
+    return this.replace(new RegExp(find, 'g'), replace);
+};
 String.prototype.toProperCase = function () {
     return this.replace(/([^\W_]+[^\s-]*) */g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 };
