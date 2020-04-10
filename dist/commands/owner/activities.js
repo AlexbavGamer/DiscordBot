@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
+const util_1 = require("util");
 class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
         super(client, {
@@ -23,6 +24,7 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             let flag = flags[0];
+            console.log(util_1.inspect(args));
             switch (flag) {
                 case "add":
                     {
