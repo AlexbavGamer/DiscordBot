@@ -25,6 +25,7 @@ class MessageEvent extends MaytrixXEvent
        if(message.content.indexOf(settings.prefix) !== 0) return;
        
        const args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
+
        const command = args.shift()!.toLowerCase();
 
        if(message.guild && !message.member) await message.guild!.members.fetch({

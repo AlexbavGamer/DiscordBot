@@ -8,6 +8,7 @@ class ConsoleCommand extends MaytrixXCommand
     {
         super(client, {
             name: 'console',
+            description: "Execute anything in bot terminal",
             category: 'owner',
             permLevel: "Bot Owner",
         });

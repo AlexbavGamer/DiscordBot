@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
-import { MaytrixXClient } from "./MaytrixXClient";
-
+import { MaytrixXClient } from "./MaytrixXClient";  
 interface PermLevel
 {
     level: number,
@@ -28,6 +27,7 @@ interface MaytrixXConfig
     admins: string[];
     support: string[],
     token: string;
+    activities?: string[];
     defaultSettings: MaytrixXDefaultSettings;
     permLevels: PermLevel[]
 }
@@ -38,7 +38,11 @@ const config = <MaytrixXConfig>
     inviteLink: "",
     admins: [],
     support: [],
-    token: "",
+    token: "NTc0Mjc3NjE2MjcwMzExNDQ2.Xo5cDg.LyivEA5xXcvaumpqAcbaoPy9FlQ",
+    activities: [
+        "Type {{prefix}}help",
+        "Mention me to view the prefix"
+    ],
     defaultSettings:
     {
         prefix: "-",
@@ -100,6 +104,11 @@ const config = <MaytrixXConfig>
             // The check is by reading if an ID is part of this array. Yes, this means you need to
             // change this and reboot the bot to add a support user. Make it better yourself!
             check: (message) => config.support.includes(message?.author!.id)
+        },
+        {
+            level: 9,
+            name: "Bot Admin",
+            check: (message) => config.admins.includes(message?.author!.id)
         },
         {
             level: 10,

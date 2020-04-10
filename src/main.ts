@@ -18,4 +18,38 @@ declare global
     }
 }
 
-global.__BOT__ = new MaytrixXClient(process.env.BOT_TOKEN!, <MaytrixXConfig>BotConfig);
+declare global
+{
+    interface String
+    {
+        Truncate(maxLength : number, side : string, ellipsis : string) : string;
+        toProperCase() : string;
+    }
+}
+
+String.prototype.toProperCase = function()
+{
+    return this.replace(/([^\W_]+[^\s-]*) */g, (txt : string) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+}
+
+String.prototype.Truncate = function(maxLength : number, side : string, ellipsis : string = "...") : string
+{
+    var str = this;
+    if(str.length > maxLength)
+    {
+        switch(side)
+        {
+            case "start":
+                {
+                    return ellipsis + str.slice(-(maxLength - ellipsis.length));
+                }
+            case "end":
+                {
+                    return str.slice(0, maxLength - ellipsis.length) + ellipsis;
+                }
+        }
+    }
+    return str.toString();
+};
+
+global.__BOT__ = new MaytrixXClient(<MaytrixXConfig>BotConfig); 

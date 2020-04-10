@@ -11,6 +11,14 @@ class ReadyEvent extends MaytrixXEvent
     run()
     {
         console.log("Bot Online!");
+        setInterval(() => {
+            let active = this.client.config.activities![Math.floor(Math.random() * this.client.config.activities!.length)];
+            active = active.replace("{{prefix}}", this.client.config.defaultSettings.prefix);
+            this.client.user?.setActivity({
+                name: active,
+                type: "WATCHING"
+            });
+        }, 2500);
     }
 }
 

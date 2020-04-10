@@ -8,6 +8,7 @@ class ShutdownCommand extends MaytrixXCommand
     {
         super(client, {
             name: "shutdown",
+            description: "Shutdown the bot",
             category: "owner",
             permLevel: "Bot Owner",
         });

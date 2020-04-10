@@ -9,9 +9,12 @@ class GlobalConfCommand extends MaytrixXCommand
     {
         super(client, {
             name: "conf",
+            usage: "conf <view/get/edit> <key> <value>",
             aliases: ["config"],
+            description: "Modify the default configuration for all guilds.",
             category: "admin",
             permLevel: "Bot Owner",
+            guildOnly: true,
         });
     }
 
@@ -51,7 +54,7 @@ class GlobalConfCommand extends MaytrixXCommand
 
             const response = await this.client.awaitReply(message,  `Are you sure you want to permanently delete ${key} from all guilds? This **CANNOT** be undone.`);
             
-            if(["y", "yes"].includes(<string>response?.valueOf()))
+            if(["y", "yes"].includes(response?.toString()))
             {
                 delete defaults[key];
                 this.client.settings.set("default", defaults);

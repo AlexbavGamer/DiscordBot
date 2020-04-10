@@ -1,4 +1,4 @@
-import { Client, ClientEvents, Guild, Message } from "discord.js";
+import { Client, ClientEvents, Guild, Message, Collection } from "discord.js";
 import { MaytrixXConfig, MaytrixXDefaultSettings } from "./MaytrixXConfig";
 import { MaytrixXCommand } from "./MaytrixXCommand";
 import { load as loadCommands } from "./CommandHandler";
@@ -7,14 +7,27 @@ import { MaytrixXEvent } from "./MaytrixXEvent";
 import * as moment from "moment";
 import 'moment/locale/pt-br';
 import Enmap = require('enmap');
+import { inspect } from "util";
 export class MaytrixXClient extends Client
 {
     private readonly _config : MaytrixXConfig;
-    private readonly _commands : Map<string, MaytrixXCommand>;
+    private readonly _commands : Collection<string, MaytrixXCommand>;
     private readonly _aliases : Map<string, string>;
     private readonly _events : Map<string, MaytrixXEvent>;
     private readonly _settings : Enmap;
     private readonly _levelCache : Map<string, number>;
+
+    private _currentActivitie ?: number;
+
+    public get currentActivitie()
+    {
+        return this._currentActivitie!;
+    }
+
+    public set currentActivitie(n : number)
+    {
+        this._currentActivitie = n;
+    }
 
     public get levelCache()
     {
@@ -41,13 +54,14 @@ export class MaytrixXClient extends Client
         return this._commands;
     }
 
-    constructor(token : string, config : MaytrixXConfig)
+    constructor(config : MaytrixXConfig)
     {
         super();
         moment.defineLocale("pt-BR", {});
-        this.login(token!);
+        this.login(config.token!);
         this._commands = loadCommands(this);
         this._aliases = new Map();
+        this._currentActivitie = 0;
         this._commands.forEach((cmd) => {
             cmd.conf.aliases?.forEach((alias) => {
                 this._aliases.set(alias, cmd.conf.name);
@@ -75,6 +89,23 @@ export class MaytrixXClient extends Client
             const thisLevel = this.config.permLevels[i];
             this._levelCache.set(thisLevel.name, thisLevel.level);
         }
+    }
+
+    async clean(text : Object)
+    {
+        if(text.constructor.name == "Promise")
+        {
+            text = await text;
+        }
+        if(typeof text !== "string")
+        {
+            text = inspect(text, {depth: 0});
+        }
+        text = (<string>text).replace(/`/g, "`" + String.fromCharCode(8203))
+        .replace(/@/g, "@" + String.fromCharCode(8203))
+        .replace(this.token!, this.config.token);
+
+        return text;
     }
 
     async awaitReply(message : Message, question : string, limit : number = 60000) : Promise<string | boolean>

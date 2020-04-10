@@ -1,15 +1,13 @@
 import { MaytrixXClient } from "./MaytrixXClient";
 import { readdirSync } from "fs";
 import { MaytrixXCommand } from "./MaytrixXCommand";
-import { join } from "path";
 import path = require("path");
+import { Collection } from "discord.js";
 
-const load = (client : MaytrixXClient) : Map<string, MaytrixXCommand> => {
-    const cmds: Map<string, MaytrixXCommand> = new Map();
+const load = (client : MaytrixXClient) : Collection<string, MaytrixXCommand> => {
+    const cmds: Collection<string, MaytrixXCommand> = new Collection();
 
     const commandFolders : Array<string> = readdirSync(`${__dirname}/../commands/`);
-
-
 
     commandFolders.forEach((folder : string) => {
         const commandFiles : Array<string> = readdirSync(`${__dirname}/../commands/${folder}/`).filter((c: string) => c.endsWith(".js"));
