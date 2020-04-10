@@ -87,69 +87,41 @@ export class MaytrixXClient extends Client
         this._isWebSetup = isWebSetup;
         moment.defineLocale("pt-BR", {});
         this.login(config.token!);
-        if(!isWebSetup)
+
+        this._commands = loadCommands(this);
+        this._aliases = new Map();
+        this._currentActivitie = 0;
+        this._commands.forEach((cmd) => {
+            cmd.conf.aliases?.forEach((alias) => {
+                this._aliases.set(alias, cmd.conf.name);
+            });
+        });
+        this._events = loadEvents(this);
+        this._config = config;
+        this.generateInvite("ADMINISTRATOR").then(inviteLink => 
         {
-            this._commands = loadCommands(this);
-            this._aliases = new Map();
-            this._currentActivitie = 0;
-            this._commands.forEach((cmd) => {
-                cmd.conf.aliases?.forEach((alias) => {
-                    this._aliases.set(alias, cmd.conf.name);
-                });
+            this._config.inviteLink = inviteLink;
+        });
+        this._settings = new Enmap({
+            name: "settings",
+            cloneLevel: "deep",
+        });
+        this._events.forEach((event, name) => {
+            this.on(<any>name,(...args : Array<any>) => {
+                event.run(...args);
             });
-            this._events = loadEvents(this);
-            this._config = config;
-            this.generateInvite("ADMINISTRATOR").then(inviteLink => 
-            {
-                this._config.inviteLink = inviteLink;
-            });
-            this._settings = new Enmap({
-                name: "settings",
-                cloneLevel: "deep",
-            });
-            this._events.forEach((event, name) => {
-                this.on(<any>name,(...args : Array<any>) => {
-                    event.run(...args);
-                });
-            });
-    
-            this._levelCache = new Map();
-            for(let i = 0; i < this.config.permLevels!.length; i++)
-            {
-                const thisLevel = this.config.permLevels[i];
-                this._levelCache.set(thisLevel.name, thisLevel.level);
-            }
-            this.fetchApplication().then((app) => {
-                this._appInfo = app;
-            });
-        }
-        else
+        });
+
+        this._levelCache = new Map();
+        for(let i = 0; i < this.config.permLevels!.length; i++)
         {
-            this._commands = loadCommands(this);
-            this._aliases = new Map();
-            this._currentActivitie = 0;
-            this._commands.forEach((cmd) => {
-                cmd.conf.aliases?.forEach((alias) => {
-                    this._aliases.set(alias, cmd.conf.name);
-                });
-            });
-            this._events = loadEvents(this);
-            this._config = config;
-            this._settings = new Enmap({
-                name: "settings",
-                cloneLevel: "deep",
-            });
-            this._levelCache = new Map();
-            for(let i = 0; i < this.config.permLevels!.length; i++)
-            {
-                const thisLevel = this.config.permLevels[i];
-                this._levelCache.set(thisLevel.name, thisLevel.level);
-            }
-            this.fetchApplication().then((app) => {
-                this._appInfo = app;
-            });
-            setup(this);
+            const thisLevel = this.config.permLevels[i];
+            this._levelCache.set(thisLevel.name, thisLevel.level);
         }
+        this.fetchApplication().then((app) => {
+            this._appInfo = app;
+        });
+        setup(this);
     }
 
     async clean(text : Object)
