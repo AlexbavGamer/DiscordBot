@@ -21,7 +21,7 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
         });
     }
     run(message, level, args, flags) {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             let flag = flags[0];
             console.log(util_1.inspect(args));
@@ -38,8 +38,8 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
                 case "remove":
                     {
                         let index = parseInt(args[0]);
-                        if (index < 0)
-                            return message.reply(`enter a index`);
+                        if (index < 0 && index > ((_b = this.client.config.activities) === null || _b === void 0 ? void 0 : _b.length))
+                            return message.reply(`enter a valid index`);
                         let selectedAct = this.client.config.activities[index];
                         let response = yield this.client.awaitReply(message, `Are you sure you want to permanently delete ${selectedAct} from activities?`);
                         if (["y", "yes"].includes(response.toString())) {
@@ -54,7 +54,7 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
                 case "list":
                     {
                         let output = `= Activities List =\n\n\n`;
-                        (_b = this.client.config.activities) === null || _b === void 0 ? void 0 : _b.forEach((value, index) => __awaiter(this, void 0, void 0, function* () {
+                        (_c = this.client.config.activities) === null || _c === void 0 ? void 0 : _c.forEach((value, index) => __awaiter(this, void 0, void 0, function* () {
                             output += `${value} == ${index}\n`;
                         }));
                         message.channel.send(output, { code: "asciidoc" });
