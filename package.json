@@ -12,8 +12,9 @@
     "prod:serve": "node dist/main.js",
     "start": "npm run-script build && npm run-script prod:serve",
     "tslint": "tslint -c tsconfig.json -p tsconfig.json",
-    "botoff": "heroku ps:scale worker=0 --app maytrixxbot",
-    "boton": "heroku ps:scale worker=1 --app maytrixxbot"
+    "web": "node dist/web.js",
+    "botoff": "heroku ps:scale worker=0 --app maytrixxbot && heroku ps:scale web=0 --app maytrixxbot",
+    "boton": "heroku ps:scale worker=1 --app maytrixxbot && heroku ps:scale web=1 --app maytrixxbot"
   },
   "eslintConfig": {
     "rules": {
@@ -54,6 +55,7 @@
     "moment": "^2.24.0",
     "moment-duration-format": "^2.3.2",
     "node": "^13.12.0",
+    "node-win-x64": "^13.12.0",
     "nodemon": "^2.0.2",
     "passport": "^0.4.1",
     "passport-discord": "^0.1.3",

@@ -1,39 +1,44 @@
-import * as kue from 'kue';
+import { MaytrixXClient } from "./domain/MaytrixXClient";
 import { config } from "dotenv";
+import { MaytrixXConfig, config as BotConfig, MaytrixXDefaultSettings } from "./domain/MaytrixXConfig";
+import * as express from "express";
+import { MaytrixXWebPanel } from "./domain/MaytrixXWebPanel";
+import path = require("path");
+import { join, resolve } from "path";
+import { Message as DiscordMessage, Base } from "discord.js";
 
-config({path: __dirname + "/../src/.env"});
-
-import { Client } from 'pg';
-import app, { Initialize } from './app';
-
-const { DATABASE_URL, REDIS_URL } = process.env;
-
-console.log(`REDIS URL: ${REDIS_URL}`);
-const PORT = process.env.PORT ?? 5000;
-
-const start = async() => {
-    try {
-        const client = new Client({
-            connectionString: DATABASE_URL,
-        });
-        const queue = kue.createQueue({
-            prefix: 'q',
-            redis: {
-                port: 13362,
-                host: 'redis-13362.c92.us-east-1-3.ec2.cloud.redislabs.com',
-                auth: 'QjZpLE4stwM5OOP6BrtbKyoWnFpSaxpP',
-                db: 3,
-                options: {
-
-                }
-            }
-        });
-
-        await client.connect();
-        Initialize(client, queue);
-        app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
-    } catch (error) {
-        console.log(error);
+declare global
+{
+    interface String
+    {
+        Truncate(maxLength : number, side : string, ellipsis : string) : string;
+        toProperCase() : string;
     }
+}
+String.prototype.toProperCase = function()
+{
+    return this.replace(/([^\W_]+[^\s-]*) */g, (txt : string) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+}
+
+String.prototype.Truncate = function(maxLength : number, side : string, ellipsis : string = "...") : string
+{
+    var str = this;
+    if(str.length > maxLength)
+    {
+        switch(side)
+        {
+            case "start":
+                {
+                    return ellipsis + str.slice(-(maxLength - ellipsis.length));
+                }
+            case "end":
+                {
+                    return str.slice(0, maxLength - ellipsis.length) + ellipsis;
+                }
+        }
+    }
+    return str.toString();
 };
-start();
+
+
+new MaytrixXClient(<MaytrixXConfig>BotConfig, true)

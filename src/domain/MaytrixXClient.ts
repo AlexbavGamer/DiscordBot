@@ -19,7 +19,13 @@ export class MaytrixXClient extends Client
     private readonly _events : Map<string, MaytrixXEvent>;
     private readonly _settings : Enmap;
     private readonly _levelCache : Map<string, number>;
-    
+    private readonly _isWebSetup : boolean;
+
+    public get isWebSetup()
+    {
+        return this._isWebSetup;
+    }
+
     private _appInfo !: ClientApplication;
     private _site !: Server;
 
@@ -75,45 +81,75 @@ export class MaytrixXClient extends Client
         return this._commands;
     }
 
-    constructor(config : MaytrixXConfig)
+    constructor(config : MaytrixXConfig, isWebSetup: boolean = false)
     {
         super();
+        this._isWebSetup = isWebSetup;
         moment.defineLocale("pt-BR", {});
         this.login(config.token!);
-        this._commands = loadCommands(this);
-        this._aliases = new Map();
-        this._currentActivitie = 0;
-        this._commands.forEach((cmd) => {
-            cmd.conf.aliases?.forEach((alias) => {
-                this._aliases.set(alias, cmd.conf.name);
-            });
-        });
-        this._events = loadEvents(this);
-        this._config = config;
-        this.generateInvite("ADMINISTRATOR").then(inviteLink => 
+        if(!isWebSetup)
         {
-            this._config.inviteLink = inviteLink;
-        });
-        this._settings = new Enmap({
-            name: "settings",
-            cloneLevel: "deep",
-        });
-        this._events.forEach((event, name) => {
-            this.on(<any>name,(...args : Array<any>) => {
-                event.run(...args);
+            this._commands = loadCommands(this);
+            this._aliases = new Map();
+            this._currentActivitie = 0;
+            this._commands.forEach((cmd) => {
+                cmd.conf.aliases?.forEach((alias) => {
+                    this._aliases.set(alias, cmd.conf.name);
+                });
             });
-        });
-
-        this._levelCache = new Map();
-        for(let i = 0; i < this.config.permLevels!.length; i++)
-        {
-            const thisLevel = this.config.permLevels[i];
-            this._levelCache.set(thisLevel.name, thisLevel.level);
+            this._events = loadEvents(this);
+            this._config = config;
+            this.generateInvite("ADMINISTRATOR").then(inviteLink => 
+            {
+                this._config.inviteLink = inviteLink;
+            });
+            this._settings = new Enmap({
+                name: "settings",
+                cloneLevel: "deep",
+            });
+            this._events.forEach((event, name) => {
+                this.on(<any>name,(...args : Array<any>) => {
+                    event.run(...args);
+                });
+            });
+    
+            this._levelCache = new Map();
+            for(let i = 0; i < this.config.permLevels!.length; i++)
+            {
+                const thisLevel = this.config.permLevels[i];
+                this._levelCache.set(thisLevel.name, thisLevel.level);
+            }
+            this.fetchApplication().then((app) => {
+                this._appInfo = app;
+            });
         }
-        this.fetchApplication().then((app) => {
-            this._appInfo = app;
-        });
-        setup(this);
+        else
+        {
+            this._commands = loadCommands(this);
+            this._aliases = new Map();
+            this._currentActivitie = 0;
+            this._commands.forEach((cmd) => {
+                cmd.conf.aliases?.forEach((alias) => {
+                    this._aliases.set(alias, cmd.conf.name);
+                });
+            });
+            this._events = loadEvents(this);
+            this._config = config;
+            this._settings = new Enmap({
+                name: "settings",
+                cloneLevel: "deep",
+            });
+            this._levelCache = new Map();
+            for(let i = 0; i < this.config.permLevels!.length; i++)
+            {
+                const thisLevel = this.config.permLevels[i];
+                this._levelCache.set(thisLevel.name, thisLevel.level);
+            }
+            this.fetchApplication().then((app) => {
+                this._appInfo = app;
+            });
+            setup(this);
+        }
     }
 
     async clean(text : Object)
