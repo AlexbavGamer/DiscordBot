@@ -9,6 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
+const discord_js_1 = require("discord.js");
+const hastebin_gen_1 = require("hastebin-gen");
 class EvalCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
         super(client, {
@@ -27,7 +29,17 @@ class EvalCommand extends MaytrixXCommand_1.MaytrixXCommand {
             try {
                 const evaled = eval(code);
                 const clean = yield this.client.clean(evaled);
-                message.channel.send(`\`\`\`js\n${clean}\n\`\`\``);
+                if (clean.length >= 2000) {
+                    hastebin_gen_1.default(clean, { extension: "txt" }).then(link => {
+                        let Embed = new discord_js_1.MessageEmbed()
+                            .setDescription(`Because the result has more than 2000 lines, we send the result code to this site: [${link}](Code Here)`)
+                            .setTitle("Code Result");
+                        message.channel.send(Embed);
+                    });
+                }
+                else {
+                    message.channel.send(`\`\`\`js\n${clean}\n\`\`\``);
+                }
             }
             catch (error) {
                 message.channel.send(`\`ERROR\` \`\`\`xl\n${yield this.client.clean(error)}\n\`\`\``);

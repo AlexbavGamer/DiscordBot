@@ -47,6 +47,7 @@
     "express": "^4.17.1",
     "express-passport": "^0.1.0",
     "express-session": "^1.17.0",
+    "hastebin-gen": "^2.0.5",
     "helmet": "^3.22.0",
     "kue": "^0.11.6",
     "level-session-store": "^2.2.0",
