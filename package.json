@@ -2,7 +2,7 @@
   "name": "discordbot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "ts:watch": "tsc -w",
     "ts:build": "tsc",
@@ -10,7 +10,7 @@
     "watch": "concurrently \"npm run-script ts:watch\" \"npm run-script serve\"",
     "build": "npm run-script ts:build",
     "prod:serve": "node dist/main.js",
-    "start": "npm run-script build && npm run-script prod:serve",
+    "start": "npm run-script prod:serve",
     "tslint": "tslint -c tsconfig.json -p tsconfig.json",
     "web": "node dist/web.js",
     "botoff": "heroku ps:scale worker=0 --app maytrixxbot && heroku ps:scale web=0 --app maytrixxbot",
