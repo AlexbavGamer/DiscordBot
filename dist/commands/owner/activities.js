@@ -10,8 +10,8 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
             aliases: ["activitie"]
         });
     }
-    run(message, level, args) {
-        let flag = message.flags.toArray()[0];
+    run(message, level, args, flags) {
+        let flag = flags[0];
         message.channel.send(flag);
     }
 }
