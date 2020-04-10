@@ -38,7 +38,7 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
                 case "remove":
                     {
                         let index = parseInt(args[0]);
-                        if (index !== -1)
+                        if (index < 0)
                             return message.reply(`enter a index`);
                         let selectedAct = this.client.config.activities[index];
                         let response = yield this.client.awaitReply(message, `Are you sure you want to permanently delete ${selectedAct} from activities?`);
