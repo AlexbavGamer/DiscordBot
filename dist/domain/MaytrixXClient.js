@@ -90,6 +90,15 @@ class MaytrixXClient extends discord_js_1.Client {
     get commands() {
         return this._commands;
     }
+    loadCommand(commandName) {
+        var _a;
+        let command = CommandHandler_1.load(this).get(commandName);
+        this.commands.set(command.conf.name, command);
+        (_a = command === null || command === void 0 ? void 0 : command.conf.aliases) === null || _a === void 0 ? void 0 : _a.forEach(alias => {
+            this.aliases.set(alias, command === null || command === void 0 ? void 0 : command.conf.name);
+        });
+        return false;
+    }
     unloadCommand(commandName) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
