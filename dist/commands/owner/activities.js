@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
 class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
@@ -16,3 +15,4 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
         message.channel.send(flag);
     }
 }
+module.exports = ActivitiesCommand;
