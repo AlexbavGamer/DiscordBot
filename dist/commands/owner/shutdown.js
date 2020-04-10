@@ -10,7 +10,6 @@ class ShutdownCommand extends MaytrixXCommand_1.MaytrixXCommand {
         });
     }
     run(message, level, ...args) {
-        this.client.destroy();
     }
 }
 module.exports = ShutdownCommand;

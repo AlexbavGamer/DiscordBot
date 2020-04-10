@@ -90,6 +90,24 @@ class MaytrixXClient extends discord_js_1.Client {
     get commands() {
         return this._commands;
     }
+    unloadCommand(commandName) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(`Trying to unload ${commandName}`);
+            const command = this.commands.get(commandName) || this.commands.get(this.aliases.get(commandName));
+            if (!command)
+                return `The command \`${commandName}\` doesn't seem to exist, nor is it an alias. Try again!`;
+            if (!command.shutdown) {
+                yield command.shutdown(this);
+            }
+            (_a = command.conf.aliases) === null || _a === void 0 ? void 0 : _a.forEach(alias => {
+                this.aliases.delete(alias);
+            });
+            this.commands.delete(command.conf.name);
+            delete require.cache[command.getCommandPath()];
+            return false;
+        });
+    }
     clean(text) {
         return __awaiter(this, void 0, void 0, function* () {
             if (text.constructor.name == "Promise") {
