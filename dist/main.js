@@ -23,4 +23,4 @@ String.prototype.Truncate = function (maxLength, side, ellipsis = "...") {
     }
     return str.toString();
 };
-global.__BOT__ = new MaytrixXClient_1.MaytrixXClient(MaytrixXConfig_1.config);
+const bot = new MaytrixXClient_1.MaytrixXClient(MaytrixXConfig_1.config);

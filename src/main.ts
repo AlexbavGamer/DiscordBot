@@ -2,22 +2,10 @@ import { MaytrixXClient } from "./domain/MaytrixXClient";
 import { config } from "dotenv";
 import { MaytrixXConfig, config as BotConfig, MaytrixXDefaultSettings } from "./domain/MaytrixXConfig";
 import * as express from "express";
-import { MaytrixXWebPanel } from "./domain/MaytrixXWebPanel";
 import path = require("path");
 import { join, resolve } from "path";
 import { Message as DiscordMessage, Base } from "discord.js";
 config({path: __dirname + "/../src/.env"});
-
-declare global
-{
-    namespace NodeJS{
-        interface Global
-        {
-            __BOT__ : MaytrixXClient;
-            __BOT_WEBPANEL__ : MaytrixXWebPanel
-        }
-    }
-}
 
 declare global
 {
@@ -52,4 +40,4 @@ String.prototype.Truncate = function(maxLength : number, side : string, ellipsis
     return str.toString();
 };
 
-global.__BOT__ = new MaytrixXClient(<MaytrixXConfig>BotConfig); 
+const bot = new MaytrixXClient(<MaytrixXConfig>BotConfig); 
