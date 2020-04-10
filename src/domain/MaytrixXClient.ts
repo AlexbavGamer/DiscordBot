@@ -1,4 +1,4 @@
-import { Client, ClientEvents, Guild, Message, Collection } from "discord.js";
+import { Client, ClientEvents, Guild, Message, Collection, ClientApplication } from "discord.js";
 import { MaytrixXConfig, MaytrixXDefaultSettings } from "./MaytrixXConfig";
 import { MaytrixXCommand } from "./MaytrixXCommand";
 import { load as loadCommands } from "./CommandHandler";
@@ -8,6 +8,9 @@ import * as moment from "moment";
 import 'moment/locale/pt-br';
 import Enmap = require('enmap');
 import { inspect } from "util";
+import _ = require("lodash");
+import { Server } from "http";
+import { setup } from "./util/Dashboard";
 export class MaytrixXClient extends Client
 {
     private readonly _config : MaytrixXConfig;
@@ -16,6 +19,24 @@ export class MaytrixXClient extends Client
     private readonly _events : Map<string, MaytrixXEvent>;
     private readonly _settings : Enmap;
     private readonly _levelCache : Map<string, number>;
+    
+    private _appInfo !: ClientApplication;
+    private _site !: Server;
+
+    public get appInfo()
+    {
+        return this._appInfo;
+    }
+
+    public get site()
+    {
+        return this._site;
+    }
+
+    public set site(site : Server)
+    {
+        this._site = site;
+    }
 
     private _currentActivitie ?: number;
 
@@ -89,6 +110,10 @@ export class MaytrixXClient extends Client
             const thisLevel = this.config.permLevels[i];
             this._levelCache.set(thisLevel.name, thisLevel.level);
         }
+        this.fetchApplication().then((app) => {
+            this._appInfo = app;
+        });
+        setup(this);
     }
 
     async clean(text : Object)
@@ -140,6 +165,17 @@ export class MaytrixXClient extends Client
         }
 
         return permlvl;
+    }
+
+    writeSettings(id : string, newSettings : any)
+    {
+        const defaults = this.settings.get("default");
+        let settings = this.settings.get(id) || {};
+        
+        this.settings.set(id, {
+            ..._.pickBy(settings, (v, k) => !_.isNil(defaults[k])),
+            ..._.pickBy(newSettings, (v, k) => !_.isNil(defaults[k]))
+        });
     }
 
     getSettings(guild : Guild) : MaytrixXDefaultSettings

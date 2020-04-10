@@ -27,6 +27,14 @@ interface MaytrixXConfig
     admins: string[];
     support: string[],
     token: string;
+    mongo: string;
+    dashboard: {
+        oauthSecret: string;
+        callbackURL: string;
+        sessionSecret: string;
+        domain: string;
+        port: string;
+    },
     activities?: string[];
     defaultSettings: MaytrixXDefaultSettings;
     permLevels: PermLevel[]
@@ -39,10 +47,19 @@ const config = <MaytrixXConfig>
     admins: [],
     support: [],
     token: "NTc0Mjc3NjE2MjcwMzExNDQ2.Xo5cDg.LyivEA5xXcvaumpqAcbaoPy9FlQ",
+    mongo: "mongodb://admin:001998Br@ds231207.mlab.com:31207/discordbot",
     activities: [
         "Type {{prefix}}help",
         "Mention me to view the prefix"
     ],
+    dashboard:
+    {
+        oauthSecret: "Ka5eH12y0KWK9kst5uSG4RDzcJCQ2lsu",
+        callbackURL: "http://localhost:3000/callback",
+        sessionSecret: "Afag2154",
+        domain: "localhost",
+        port: "3000"
+    },
     defaultSettings:
     {
         prefix: "-",

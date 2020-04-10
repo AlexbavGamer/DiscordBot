@@ -13,13 +13,23 @@ class guildMemberAddEvent extends MaytrixXEvent
     {
         const settings = this.client.getSettings(member.guild);
 
-        if(settings.welcomeEnabled !== true) return;
+        const welcomeEnabled = settings.welcomeEnabled ? "true" : "false";
 
-        const welcomeMessage = settings.welcomeMessage.replace("{{user}}", member.user.tag);    
+        if(welcomeEnabled !== "true") return;
+        const welcomeMessage = settings.welcomeMessage.replace("{{user}}", `<@${member.user.id}>`);    
 
-        const channel : TextChannel = <TextChannel>member.guild.channels.cache.find(c => c.name === settings.welcomeChannel);
+        try
+        {
+            const channel : TextChannel = <TextChannel>member.guild.channels.cache.find(c => c.name === settings.welcomeChannel);
 
-        channel.send(welcomeMessage).catch(console.error);
+            console.log(`Welcome Channel: ${channel.name ?? "Undefined"}`);
+
+            channel.send(welcomeMessage).catch(console.error);
+        }
+        catch(error)
+        {
+            console.log(error);
+        }
     }
 }
 

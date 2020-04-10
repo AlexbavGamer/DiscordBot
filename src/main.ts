@@ -1,10 +1,11 @@
 import { MaytrixXClient } from "./domain/MaytrixXClient";
 import { config } from "dotenv";
-import { MaytrixXConfig, config as BotConfig } from "./domain/MaytrixXConfig";
+import { MaytrixXConfig, config as BotConfig, MaytrixXDefaultSettings } from "./domain/MaytrixXConfig";
 import * as express from "express";
 import { MaytrixXWebPanel } from "./domain/MaytrixXWebPanel";
 import path = require("path");
 import { join, resolve } from "path";
+import { Message as DiscordMessage, Base } from "discord.js";
 config({path: __dirname + "/../src/.env"});
 
 declare global
@@ -26,7 +27,6 @@ declare global
         toProperCase() : string;
     }
 }
-
 String.prototype.toProperCase = function()
 {
     return this.replace(/([^\W_]+[^\s-]*) */g, (txt : string) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());

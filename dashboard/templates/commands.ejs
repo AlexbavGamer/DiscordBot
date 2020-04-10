@@ -1,0 +1,42 @@
+<%- include ('./blocks/header', {bot, user, path}) %>
+<% const help = {};
+bot.commands.forEach((command) => {
+  const cat = command.conf.category;
+  if (!help.hasOwnProperty(cat)) help[cat] = [];
+  help[cat].push(command);
+});
+%>
+<div class="container">
+  <h2>Commands</h2>
+  <% for (const category in help) { %>
+    <br>
+    <h3><%= category %></h3>
+    <br>
+    <div class="card-columns">
+      <% for (const command of help[category]) { %>
+        <div class="card">
+          <h3 class="card-header"><%= command.conf.name %></h3>
+          <div class="card-body">
+            <p class="card-text"><%= command.conf.description %></p>
+            <h6 class="card-subtitle text-muted">Permission: <%= command.conf.permLevel %><br /><a href="#" data-toggle="modal" data-target="#<%= `${command.conf.name}` %>Modal">more...</a></h6>
+          </div>
+        </div>
+        <div id="<%= `${command.conf.name}` %>Modal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header btn-info disabled">
+                <h4 class="modal-title"><%= command.conf.name %></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+                <p>Usage Example: <%= command.conf.usage %></p>
+                <p>Command Aliases: <%= command.conf.aliases %></p>
+              </div>
+              <div class="modal-footer"><button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button></div>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+<% include ('./blocks/footer') %>
