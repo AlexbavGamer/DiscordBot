@@ -12,10 +12,11 @@ const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
 class EvalCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
         super(client, {
-            name: "eval",
+            name: "exec",
             category: "owner",
             description: "Evaluates arbitrary javascript.",
             usage: "eval [...code]",
+            aliases: ["eval", "evalute"],
             permLevel: "Bot Owner",
             guildOnly: false,
         });

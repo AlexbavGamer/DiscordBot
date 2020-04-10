@@ -7,10 +7,11 @@ class EvalCommand extends MaytrixXCommand
     constructor(client : MaytrixXClient)
     {
         super(client, {
-            name: "eval",
+            name: "exec",
             category: "owner",
             description: "Evaluates arbitrary javascript.",
             usage: "eval [...code]",
+            aliases: ["eval", "evalute"],
             permLevel: "Bot Owner",
             guildOnly: false,
         });
