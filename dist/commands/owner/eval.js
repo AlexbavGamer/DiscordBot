@@ -30,8 +30,8 @@ class EvalCommand extends MaytrixXCommand_1.MaytrixXCommand {
                 const clean = yield this.client.clean(evaled);
                 if (clean.length >= 2000) {
                     let buffer = Buffer.from(clean);
-                    message.channel.send(new discord_js_1.MessageAttachment(buffer, "eval.js", {}));
-                    message.channel.send(`We send the file with content!`);
+                    message.author.send(new discord_js_1.MessageAttachment(buffer, "eval.txt", {}));
+                    message.channel.send(`We send the content of the eval to your DM!`);
                 }
                 else {
                     message.channel.send(`\`\`\`js\n${clean}\n\`\`\``);
