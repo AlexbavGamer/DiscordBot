@@ -40,6 +40,9 @@ class MessageEvent extends MaytrixXEvent_1.MaytrixXEvent {
             if (cmd && !message.guild && cmd.conf.guildOnly) {
                 return message.channel.send(`This command is unavailable via private message. Please run this command in a guild.`);
             }
+            if (cmd && message.guild && cmd.conf.dmOnly) {
+                return message.channel.send(`This command is via private message. Please run this command in a private.`);
+            }
             if (level < this.client.levelCache.get(cmd.conf.permLevel)) {
                 if (settings.systemNotice) {
                     return message.channel.send(`You do not have permission to use this command.
