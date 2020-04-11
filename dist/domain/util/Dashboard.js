@@ -18,8 +18,6 @@ require("moment-duration-format");
 const passport = require("passport");
 const session = require("express-session");
 const passport_discord_1 = require("passport-discord");
-const node_cmd_1 = require("node-cmd");
-const crypto = require("crypto");
 const app = express();
 const connectMongo = require("connect-mongo");
 const MongoStore = connectMongo(session);
@@ -275,24 +273,6 @@ const setup = (client) => __awaiter(void 0, void 0, void 0, function* () {
         client.settings.delete(guild.id);
         res.redirect("/dashboard/" + req.params.guildID);
     }));
-    app.post("/git", (req, res) => {
-        let hmac = crypto.createHmac("sha1", process.env.SECRET);
-        let sig = `sha1=${hmac.update(JSON.stringify(req.body)).digest("hex")}`;
-        if (req.headers['x-github-event'] == "push" && sig == req.headers['x-hub-signature']) {
-            node_cmd_1.default.run("chmod 777 git.sh");
-            node_cmd_1.default.get("./git.sh", (err, data) => {
-                if (data)
-                    console.log(data);
-                if (err)
-                    console.log(err);
-            });
-            node_cmd_1.default.run("refresh");
-            let message = req.body.head_commit.message;
-            let commits = message.split("\n").length == 1 ? message : message.split("\n").map((el, i) => i !== 0 ? "                       " + el : el).join("\n");
-            console.log(`> [GIT] Updated with origin/master\n` +
-                `        Latest commit: ${commits}`);
-        }
-    });
     client.site = app.listen(client.config.dashboard.port);
 });
 exports.setup = setup;
