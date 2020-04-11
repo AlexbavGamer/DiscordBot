@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
 const discord_js_1 = require("discord.js");
+const TS = require("typescript");
 class EvalCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
         super(client, {
@@ -26,7 +27,8 @@ class EvalCommand extends MaytrixXCommand_1.MaytrixXCommand {
         return __awaiter(this, void 0, void 0, function* () {
             const code = args.join(" ");
             try {
-                const evaled = eval(code);
+                const result = TS.transpile(code);
+                const evaled = eval(result);
                 const clean = yield this.client.clean(evaled);
                 if (clean.length >= 2000) {
                     let buffer = Buffer.from(clean);

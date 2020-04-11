@@ -57,7 +57,12 @@ class MessageEvent extends MaytrixXEvent_1.MaytrixXEvent {
             while (args[0] && args[0][0] === "-") {
                 flags.push(args.shift().slice(1));
             }
-            cmd.run(message, level, args, flags);
+            if (flags.length == 0) {
+                cmd.run(message, level, args);
+            }
+            else {
+                cmd.run(message, level, args, flags);
+            }
         });
     }
 }
