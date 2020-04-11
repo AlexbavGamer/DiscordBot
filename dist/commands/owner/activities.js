@@ -21,7 +21,7 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
         });
     }
     run(message, level, args, flags) {
-        var _a, _b, _c;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             let flag = flags[0];
             console.log(util_1.inspect(args));
@@ -31,19 +31,19 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
                         let input = args.join(" ");
                         if (input.length == 0)
                             return message.reply(`enter a input`);
-                        (_a = this.client.config.activities) === null || _a === void 0 ? void 0 : _a.push(input);
+                        this.client.addActivitie(input);
                         message.channel.send(`Activitie added: ${input.Truncate(30, "end", "...")}`);
                         break;
                     }
                 case "remove":
                     {
                         let index = parseInt(args[0]);
-                        if (index < 0 && index > ((_b = this.client.config.activities) === null || _b === void 0 ? void 0 : _b.length))
+                        if (index < 0 && index > ((_a = this.client.config.activities) === null || _a === void 0 ? void 0 : _a.length))
                             return message.reply(`enter a valid index`);
                         let selectedAct = this.client.config.activities[index];
                         let response = yield this.client.awaitReply(message, `Are you sure you want to permanently delete ${selectedAct} from activities?`);
                         if (["y", "yes"].includes(response.toString())) {
-                            delete this.client.config.activities[index];
+                            this.client.removeActivitie(selectedAct);
                             message.channel.send(`Activitie removed: ${selectedAct.Truncate(30, "end", "...")}`);
                         }
                         else if (["n", "no"].includes(response.toString())) {
@@ -54,7 +54,7 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
                 case "list":
                     {
                         let output = `= Activities List =\n\n\n`;
-                        (_c = this.client.config.activities) === null || _c === void 0 ? void 0 : _c.forEach((value, index) => __awaiter(this, void 0, void 0, function* () {
+                        (_b = this.client.getActivities()) === null || _b === void 0 ? void 0 : _b.forEach((value, index) => __awaiter(this, void 0, void 0, function* () {
                             output += `${value} == ${index}\n`;
                         }));
                         message.channel.send(output, { code: "asciidoc" });

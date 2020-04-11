@@ -7,6 +7,7 @@ const config = {
     support: [],
     token: "NTc0Mjc3NjE2MjcwMzExNDQ2.Xo5cDg.LyivEA5xXcvaumpqAcbaoPy9FlQ",
     mongo: "mongodb://admin:001998Br@ds231207.mlab.com:31207/discordbot",
+    activitieType: "CUSTOM_STATUS",
     activities: [
         "Type {{prefix}}help",
         "Mention me to view the prefix"

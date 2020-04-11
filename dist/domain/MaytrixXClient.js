@@ -42,6 +42,7 @@ class MaytrixXClient extends discord_js_1.Client {
             name: "settings",
             cloneLevel: "deep",
         });
+        this.getActivities();
         this._events.forEach((event, name) => {
             this.on(name, (...args) => {
                 event.run(...args);
@@ -89,6 +90,25 @@ class MaytrixXClient extends discord_js_1.Client {
     }
     get commands() {
         return this._commands;
+    }
+    getActivities() {
+        if (!this._settings.has("activities"))
+            this._settings.set("activities", this._config.activities);
+        return this._settings.get("activities");
+    }
+    addActivitie(value) {
+        let activities = this.getActivities();
+        if (activities.includes(value))
+            return;
+        activities.push(value);
+        this._settings.set("activities", activities);
+    }
+    removeActivitie(value) {
+        let activities = this.getActivities();
+        let found = activities.find(a => a == value);
+        let index = activities.indexOf(found);
+        delete activities[index];
+        this._settings.set("activities", activities);
     }
     loadCommand(commandName) {
         var _a;
