@@ -113,7 +113,7 @@ class MaytrixXClient extends discord_js_1.Client {
                 this.aliases.delete(alias);
             });
             this.commands.delete(command.conf.name);
-            delete require.cache[command.getCommandPath()];
+            delete require.cache[`${command.getCommandPath()}.js`];
             return false;
         });
     }

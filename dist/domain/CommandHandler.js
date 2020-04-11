@@ -12,6 +12,7 @@ const load = (client) => {
             const filePath = path.resolve(`${__dirname}/../commands/${folder}/${file}`);
             const pull = require(filePath);
             const cmd = new pull(client);
+            cmd.path = filePath;
             cmds.set(cmd.conf.name, cmd);
             delete require.cache[filePath];
         }

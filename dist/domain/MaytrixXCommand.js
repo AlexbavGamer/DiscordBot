@@ -11,8 +11,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class MaytrixXCommand {
     constructor(client, conf) {
+        this._path = "";
         this._client = client;
         this._conf = conf;
+    }
+    get path() {
+        return this._path;
+    }
+    set path(path) {
+        this._path = path;
     }
     get conf() {
         return this._conf;
@@ -21,7 +28,7 @@ class MaytrixXCommand {
         return this._client;
     }
     getCommandPath() {
-        return __dirname;
+        return this._path;
     }
     shutdown(client) {
         return __awaiter(this, void 0, void 0, function* () { });
