@@ -16,6 +16,9 @@
     "botoff": "heroku ps:scale worker=0 --app maytrixxbot && heroku ps:scale web=0 --app maytrixxbot",
     "boton": "heroku ps:scale worker=1 --app maytrixxbot && heroku ps:scale web=1 --app maytrixxbot"
   },
+  "engines": {
+    "node": ">=12.10.0"
+  },
   "eslintConfig": {
     "rules": {
       "@typescript-eslint/no-unused-vars": "off",
