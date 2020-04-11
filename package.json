@@ -17,8 +17,8 @@
     "boton": "heroku ps:scale worker=1 --app maytrixxbot && heroku ps:scale web=1 --app maytrixxbot"
   },
   "engines": {
-    "node": ">=12.10.0",
-    "npm": ">=6.10.3"
+    "node": "12.10.0",
+    "npm": "6.10.3"
   },
   "eslintConfig": {
     "rules": {
