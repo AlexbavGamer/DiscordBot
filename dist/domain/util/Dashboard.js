@@ -18,6 +18,8 @@ require("moment-duration-format");
 const passport = require("passport");
 const session = require("express-session");
 const passport_discord_1 = require("passport-discord");
+const child_process_1 = require("child_process");
+const crypto = require("crypto");
 const app = express();
 const connectMongo = require("connect-mongo");
 const MongoStore = connectMongo(session);
@@ -179,6 +181,9 @@ const setup = (client) => __awaiter(void 0, void 0, void 0, function* () {
         client.writeSettings(guild.id, req.body);
         res.redirect(`/dashboard/${req.params.guildID}/manage`);
     });
+    app.get("/botsettings", checkAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        renderTemplate(req, res, "botsettings.ejs");
+    }));
     app.get("/dashboard/:guildID/members", checkAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const guild = client.guilds.cache.get(req.params.guildID);
         if (!guild)
@@ -273,6 +278,25 @@ const setup = (client) => __awaiter(void 0, void 0, void 0, function* () {
         client.settings.delete(guild.id);
         res.redirect("/dashboard/" + req.params.guildID);
     }));
+    app.post("/git", (req, res) => {
+        let hmac = crypto.createHmac("sha1", process.env.SECRET);
+        let sig = `sha1=${hmac.update(JSON.stringify(req.body)).digest("hex")}`;
+        if (req.headers['x-github-event'] == "push" && sig == req.headers['x-hub-signature']) {
+            child_process_1.exec("chmod 777 git.sh");
+            child_process_1.exec("./git.sh", (err, data) => {
+                if (data)
+                    console.log(data);
+                if (err)
+                    console.log(err);
+            });
+            child_process_1.exec("refresh");
+            let message = req.body.head_commit.message;
+            let commits = message.split("\n").length == 1 ? message : message.split("\n").map((el, i) => i !== 0 ? "                       " + el : el).join("\n");
+            console.log(`> [GIT] Updated with origin/master\n` +
+                `        Latest commit: ${commits}`);
+        }
+        return res.status(200);
+    });
     client.site = app.listen(client.config.dashboard.port);
 });
 exports.setup = setup;

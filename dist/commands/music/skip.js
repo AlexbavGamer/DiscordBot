@@ -9,29 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
-class ReloadCommand extends MaytrixXCommand_1.MaytrixXCommand {
+const MusicUtil_1 = require("../../domain/util/MusicUtil");
+class SkipCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
         super(client, {
-            guildOnly: false,
-            aliases: [],
-            permLevel: "Bot Admin",
-            name: "reload",
-            category: "owner",
-            description: "Reloads a command that\"s been modified."
+            aliases: ["pular"],
+            guildOnly: true,
+            dmOnly: false,
+            permLevel: "User",
+            name: "skip",
+            category: "youtube"
         });
     }
-    run(message, level, [commandName, ...values]) {
+    run(message, level, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!commandName)
-                return message.reply("Must provide a command to reload. Derp.");
-            let response = yield this.client.unloadCommand(commandName);
-            if (response)
-                return message.reply(`Error Unloading: ${response}`);
-            response = this.client.loadCommand(commandName);
-            if (response)
-                return message.reply(`Error Loading: ${response}`);
-            message.reply(`The command \`${commandName}\` has been reloaded`);
+            const serverQueue = this.client.queue.get(message.guild.id);
+            MusicUtil_1.default.Skip(message, serverQueue);
         });
     }
 }
-module.exports = ReloadCommand;
+module.exports = SkipCommand;

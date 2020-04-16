@@ -10,7 +10,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="<%=bot.user.username%>" />
   <% if(bot.appInfo.description.length > 3) { %> <meta property="og:description" content="<%= bot.appInfo.description %>" /> <% }  %>
-    <meta property="og:image" content="<%= bot.user.avatarURL%>" 
+    <meta property="og:image" content="<%= bot.user.avatarURL() %>">
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -23,7 +23,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha256-zG8v+NWiZxmjNi+CvUYnZwKtHzFtdO8cAKUIdB8+U9I=" crossorigin="anonymous"></script>
   <script src="https://cdn.datatables.net/v/bs4/dt-1.10.16/cr-1.4.1/r-2.2.0/datatables.min.js"></script>
-  <link rel='icon' href='<%= bot.user.avatarURL %>'>
+  <link rel='icon' href='<%= bot.user.avatarURL() %>'>
   <title>
     <%= bot.user.username %>
   </title>
@@ -33,7 +33,7 @@
   <a name="top"></a>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-      <a class="navbar-brand" href="/" ><img src="<%= bot.user.avatarURL %>" width="30" height="30" class="d-inline-block rounded-circle" alt=""> <span class="align-middle"><%= bot.user.username %></span></a>
+      <a class="navbar-brand" href="/" ><img src="<%= bot.user.avatarURL() %>" width="30" height="30" class="d-inline-block rounded-circle" alt=""> <span class="align-middle"><%= bot.user.username %></span></a>
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar01" aria-controls="navbar01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -44,7 +44,7 @@
           <li class="nav-item"><a class="nav-link" href="/commands">Commands</a></li>
           <li class="nav-item"><a class="nav-link<% if(!bot.appInfo.botPublic) { %> disabled<% } %>" href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.appInfo.id %>&scope=bot&response_type=code&redirect_uri=<%= encodeURIComponent(bot.config.dashboard.callbackURL) %>">Add to Server</a></li>
           <li class="nav-item"><a class="nav-link" href="/stats">On <%= bot.guilds.size %>  Servers</a></li>
-        </ul>
+		    </ul>
         <ul class="navbar-nav">
           <% if(user) { %>
             <li class="nav-item dropdown">
@@ -56,6 +56,7 @@
                 <h6 class="dropdown-header"><i class="fa fa-user" aria-hidden="true"></i> <%= user.username %></h6>
                 <a class="dropdown-item" href="/dashboard"><i class="fa fa-cogs" aria-hidden="true"></i> Dashboard</a>
                 <% if(user.id === bot.appInfo.owner.id) { %>
+                  <a class="dropdown-item" href="/botsettings"><i class="fa fa-cogs"> <%= bot.user.username %> Settings</i></a>
                   <a class="dropdown-item" href="/admin"><i class="fa fa-key"></i> Admin</a>
                 <% } %>
                 <div class="dropdown-divider"></div>

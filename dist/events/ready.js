@@ -5,6 +5,13 @@ class ReadyEvent extends MaytrixXEvent_1.MaytrixXEvent {
         super(client);
     }
     run() {
+        console.log(`Guildas: ${this.client.guilds.cache.size}\n` +
+            `Canais de Texto: ${this.client.channels.cache.filter(c => c.type == "text").size}` +
+            `Canais de Voz: ${this.client.channels.cache.filter(c => c.type == "voice").size} ` +
+            `Usuarios: ${this.client.users.cache.size}` +
+            `Prefixos: ${this.client.guilds.cache.map((guild) => {
+                return this.client.getSettings(guild).prefix;
+            }).join(", ")}`);
         console.log("Bot Online!");
         let activities = this.client.getActivities();
         setInterval(() => {
@@ -19,7 +26,7 @@ class ReadyEvent extends MaytrixXEvent_1.MaytrixXEvent {
                 url: this.client.config.activitieURL,
                 type: this.client.config.activitieType
             });
-        }, 2500);
+        }, 5000);
     }
 }
 module.exports = ReadyEvent;

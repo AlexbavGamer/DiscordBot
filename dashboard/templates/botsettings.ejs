@@ -1,0 +1,11 @@
+<%- include('./blocks/header', {bot, user, path}) %>
+<div class="row">
+  <div class="col col-3">
+    <%- include('./blocks/setting-card.ejs', {bot}) %>
+  </div>
+  <div class="col">
+    <%- include('./blocks/setting-nav.ejs') %>
+  </div>
+</div>
+
+<% include ('./blocks/footer') %>

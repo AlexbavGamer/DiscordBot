@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
-const util_1 = require("util");
 class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
         super(client, {
@@ -24,7 +23,6 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             let flag = flags[0];
-            console.log(util_1.inspect(args));
             switch (flag) {
                 case "add":
                     {
@@ -40,7 +38,7 @@ class ActivitiesCommand extends MaytrixXCommand_1.MaytrixXCommand {
                         let index = parseInt(args[0]);
                         if (index < 0 && index > ((_a = this.client.config.activities) === null || _a === void 0 ? void 0 : _a.length))
                             return message.reply(`enter a valid index`);
-                        let selectedAct = this.client.config.activities[index];
+                        let selectedAct = this.client.getActivities()[index];
                         let response = yield this.client.awaitReply(message, `Are you sure you want to permanently delete ${selectedAct} from activities?`);
                         if (["y", "yes"].includes(response.toString())) {
                             this.client.removeActivitie(selectedAct);

@@ -26,4 +26,9 @@ String.prototype.Truncate = function (maxLength, side, ellipsis = "...") {
     }
     return str.toString();
 };
-const bot = new MaytrixXClient_1.MaytrixXClient(MaytrixXConfig_1.config);
+Array.prototype.flat = function (depth = 1) {
+    return this.reduce((flat, toFlatten) => {
+        return flat.concat((Array.isArray(toFlatten) && (depth > 1)) ? toFlatten.flat(depth - 1) : toFlatten);
+    }, []);
+};
+global.bot = new MaytrixXClient_1.MaytrixXClient(MaytrixXConfig_1.config);

@@ -9,22 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
+const child_process_1 = require("child_process");
 class RestartCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
         super(client, {
             name: "restart",
             description: "restart the bot",
             category: "owner",
-            permLevel: "Bot Owner"
+            permLevel: "Bot Admin"
         });
     }
     run(message, level, ...args) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield message.reply("Bot is shutting down");
-            this.client.commands.forEach((cmd) => __awaiter(this, void 0, void 0, function* () {
-                this.client.unloadCommand(cmd.conf.name);
-            }));
-            process.exit(1);
+            message.reply(`Getting last project version: `);
+            child_process_1.exec("chmod 777 ./git.sh && ./git.sh && refresh", (err, out) => {
+                console.log(out);
+                message.reply(out);
+            });
         });
     }
 }

@@ -21,6 +21,7 @@ const Dashboard_1 = require("./util/Dashboard");
 class MaytrixXClient extends discord_js_1.Client {
     constructor(config, isWebSetup = false) {
         super();
+        this._queue = new Map();
         this._isWebSetup = isWebSetup;
         moment.defineLocale("pt-BR", {});
         this.login(config.token);
@@ -60,6 +61,12 @@ class MaytrixXClient extends discord_js_1.Client {
     }
     get isWebSetup() {
         return this._isWebSetup;
+    }
+    get queue() {
+        return this._queue;
+    }
+    set queue(map) {
+        this._queue = map;
     }
     get appInfo() {
         return this._appInfo;
@@ -107,7 +114,7 @@ class MaytrixXClient extends discord_js_1.Client {
         let activities = this.getActivities();
         let found = activities.find(a => a == value);
         let index = activities.indexOf(found);
-        delete activities[index];
+        activities = activities.filter((value, index) => value != found);
         this._settings.set("activities", activities);
     }
     loadCommand(commandName) {

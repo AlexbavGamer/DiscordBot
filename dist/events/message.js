@@ -53,9 +53,6 @@ class MessageEvent extends MaytrixXEvent_1.MaytrixXEvent {
                     return;
                 }
             }
-            message.flags.toArray().forEach(flag => {
-                message.flags.remove(flag);
-            });
             let flags = [];
             while (args[0] && args[0][0] === "-") {
                 flags.push(args.shift().slice(1));

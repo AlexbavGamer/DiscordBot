@@ -9,22 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
-class MyLevelCommand extends MaytrixXCommand_1.MaytrixXCommand {
+const MusicUtil_1 = require("../../domain/util/MusicUtil");
+class StopCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
         super(client, {
-            name: "mylevel",
-            description: "Tells you your permission level for the current message location.",
-            category: "Miscellaneous",
-            permLevel: "User",
+            aliases: ["parar"],
             guildOnly: true,
+            dmOnly: false,
+            permLevel: "User",
+            name: "stop",
+            category: "youtube"
         });
     }
     run(message, level, args) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const friendly = (_a = this.client.config.permLevels.find(l => l.level == level)) === null || _a === void 0 ? void 0 : _a.name;
-            message.reply(`Your permission level is: ${level} - ${friendly}`);
+            const serverQueue = this.client.queue.get(message.guild.id);
+            MusicUtil_1.default.Stop(message, serverQueue);
         });
     }
 }
-module.exports = MyLevelCommand;
+module.exports = StopCommand;

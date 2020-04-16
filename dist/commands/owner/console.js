@@ -10,7 +10,7 @@ class ConsoleCommand extends MaytrixXCommand_1.MaytrixXCommand {
             permLevel: "Bot Owner",
         });
     }
-    run(message, level, ...args) {
+    run(message, level, args) {
         const consoleArgs = args.join(" ");
         try {
             child_process_1.exec(consoleArgs, {

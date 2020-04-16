@@ -5,7 +5,7 @@ class UptimeCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
         super(client, {
             name: "status",
-            aliases: ["stats"],
+            aliases: ["stats", "uptime"],
             category: "system",
             description: "Gives some useful bot statistics",
             permLevel: "User"

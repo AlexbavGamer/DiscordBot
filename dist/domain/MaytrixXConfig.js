@@ -7,16 +7,17 @@ const config = {
     support: [],
     token: "NTc0Mjc3NjE2MjcwMzExNDQ2.Xo5cDg.LyivEA5xXcvaumpqAcbaoPy9FlQ",
     mongo: "mongodb://admin:001998Br@ds231207.mlab.com:31207/discordbot",
-    activitieType: "CUSTOM_STATUS",
+    youtubeApi: "AIzaSyB59Xg9vt1nR0GmC311t6W5k1kaPzvbfWk",
+    activitieType: "WATCHING",
     activities: [
         "Type {{prefix}}help",
         "Mention me to view the prefix"
     ],
     dashboard: {
         oauthSecret: "Ka5eH12y0KWK9kst5uSG4RDzcJCQ2lsu",
-        callbackURL: "https://maytrixxbot.glitch.me/callback",
+        callbackURL: (process.env.API_SERVER_EXTERNAL) ? "https://maytrixxbot.glitch.me/callback" : "http://localhost:3000/callback",
         sessionSecret: "Afag2154",
-        domain: "https://maytrixxbot.glitch.me/",
+        domain: (process.env.API_SERVER_EXTERNAL) ? "https://maytrixxbot.glitch.me" : "http://localhost:3000/",
         port: "3000"
     },
     defaultSettings: {

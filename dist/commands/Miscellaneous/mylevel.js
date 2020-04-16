@@ -9,29 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const MaytrixXCommand_1 = require("../../domain/MaytrixXCommand");
-class ReloadCommand extends MaytrixXCommand_1.MaytrixXCommand {
+class MyLevelCommand extends MaytrixXCommand_1.MaytrixXCommand {
     constructor(client) {
         super(client, {
-            guildOnly: false,
-            aliases: [],
-            permLevel: "Bot Admin",
-            name: "reload",
-            category: "owner",
-            description: "Reloads a command that\"s been modified."
+            name: "mylevel",
+            description: "Tells you your permission level for the current message location.",
+            category: "Miscellaneous",
+            permLevel: "User",
+            aliases: ["level"],
+            guildOnly: true,
         });
     }
-    run(message, level, [commandName, ...values]) {
+    run(message, level, args) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            if (!commandName)
-                return message.reply("Must provide a command to reload. Derp.");
-            let response = yield this.client.unloadCommand(commandName);
-            if (response)
-                return message.reply(`Error Unloading: ${response}`);
-            response = this.client.loadCommand(commandName);
-            if (response)
-                return message.reply(`Error Loading: ${response}`);
-            message.reply(`The command \`${commandName}\` has been reloaded`);
+            const friendly = (_a = this.client.config.permLevels.find(l => l.level == level)) === null || _a === void 0 ? void 0 : _a.name;
+            message.reply(`Your permission level is: ${level} - ${friendly}`);
         });
     }
 }
-module.exports = ReloadCommand;
+module.exports = MyLevelCommand;

@@ -1,0 +1,35 @@
+<div class="card" style="width: 256px;" >
+    <% if(bot.avatarURL) { %>
+       
+    <% } else { %>
+        <canvas style="background-color: #7289da;" class="card-img-top" id="<%= bot.user.username %>" width="256px" height="256px"></canvas>
+        <script>
+            function draw()
+            {
+                const ctx = document.getElementById("<%= bot.user.username %>").getContext("2d");
+                ctx.font = '50px Arial';
+                ctx.textAlign = "center";
+                ctx.fillStyle = "white";
+                ctx.fillText("<%= bot.user.username %>", 128, 153);
+            }
+            draw();
+        </script>
+    <% } %>
+    <div class="card mb-3">
+        <h3 class="card-header"><center><%= bot.user.username %> Settings</center></h3>
+        <ul class="list-group list-group-flush" style="width: 100%">
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="width: 100%" data-toggle="tooltip" title="Guilds.">
+                <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> <span id="Guilds"><%= bot.guilds.cache.size %></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="width: 100%" data-toggle="tooltip" title="Text Channels.">
+                <i class="fa fa-fw fa-hashtag" aria-hidden="true"></i> <span id="Channels"><%= bot.channels.cache.filter(c => c.type == "text").size %></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="width: 100%" data-toggle="tooltip" title="Voice Channels.">
+                <i class="fa fa-fw fa-microphone" aria-hidden="true"></i> <span id="Channels"><%= bot.channels.cache.filter(c => c.type == "voice").size %></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="width: 100%" data-toggle="tooltip" title="Users.">
+                <i class="fa fa-fw fa-users" aria-hidden="true"></i> <span id="Channels"><%= bot.users.cache.size %></span>
+            </li>
+        </ul>
+    </div>
+</div>
