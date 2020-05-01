@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "dev/null",
   "main": "src/main",
-  "engines": {
-    "node": ">=8.6"
-  },
   "scripts": {
     "dev": "ts-node-dev --respawn src/main.ts",
     "start": "npx ts-node src/main.ts",
