@@ -30,5 +30,6 @@
   "conf_key_set": "Especifique um novo valor",
   "conf_already_key_set": "Essa configuração já tem esse valor!",
   "conf_key_global_value": "\nEste é o valor padrão global padrão.",
-  "conf_key_get_value": "O valor de %s é atualmente %s%s"
+  "conf_key_get_value": "O valor de %s é atualmente %s%s",
+  "no_songs_on_queue": "Desculpe %s mas não há musicas em fila."
 }

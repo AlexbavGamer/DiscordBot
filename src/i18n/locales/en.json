@@ -36,5 +36,7 @@
     "conf_key_get": "Please specify a key to view",
     "conf_key_global_value": "\nThis is the default global default value.",
     "conf_key_get_value": "The value of %s is currently %s%s",
-    "default_settings": "Bot Default Settings"
+    "default_settings": "Bot Default Settings",
+
+    "no_songs_on_queue": "Sorry %s but not have songs on queue"
 }

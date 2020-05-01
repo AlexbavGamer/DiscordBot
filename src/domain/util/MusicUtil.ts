@@ -1,4 +1,4 @@
-import { VoiceConnection, Message, MessageEmbed, VoiceChannel, TextChannel, Guild, MessageCollector } from "discord.js";
+import { VoiceConnection, Message, MessageEmbed, VoiceChannel, TextChannel, Guild, MessageCollector, VolumeInterface } from "discord.js";
 import ytdl from "ytdl-core";
 import searchYoutube from "yt-search";
 import { MusicQueue } from "../MaytrixXClient";
@@ -29,21 +29,10 @@ export default
 
         if(!serverQueue)
         {
-            const queueContruct = <{
-                textChannel : TextChannel,
-                voiceChannel : VoiceChannel,
-                connection: VoiceConnection | null,
-                songs: Array<{
-                    title: string;
-                    url: string;
-                    description: string;
-                    thumbnail: string;
-                }>,
-                volume: number,
-                playing: boolean
-            }>{
+            const queueContruct = <MusicQueue>{
                 textChannel : message.channel,
                 voiceChannel: voiceChannel,
+                dispatcher: null,
                 connection: null,
                 songs: [],
                 volume: 5,
@@ -105,21 +94,10 @@ export default
 
         if(!serverQueue)
         {
-            const queueContruct = <{
-                textChannel : TextChannel,
-                voiceChannel : VoiceChannel,
-                connection: VoiceConnection | null,
-                songs: Array<{
-                    title: string;
-                    url: string;
-                    description: string;
-                    thumbnail: string;
-                }>,
-                volume: number,
-                playing: boolean
-            }>{
+            const queueContruct = <MusicQueue>{
                 textChannel : message.channel,
                 voiceChannel: voiceChannel,
+                dispatcher: null,
                 connection: null,
                 songs: [],
                 volume: 5,
@@ -149,6 +127,48 @@ export default
             return message.channel.send(`${song.title} has been added to queue!`);
         }
     },
+    async Volume(message : Message, args : Array<string>, serverQueue : MusicQueue)
+    {
+        const voiceChannel = message.member!.voice.channel;
+
+        if(!voiceChannel)
+        {
+            return message.channel.send(`You need to be in voice channel to play music!`);
+        }
+        const permissions = voiceChannel.permissionsFor(message!.client!.user!);
+        if(!permissions!.has("CONNECT") || !permissions!.has("SPEAK"))
+        {
+            return message.channel.send(`I need the permissions to join and speak in your voice channel!`);
+        }
+        if(serverQueue.dispatcher && serverQueue.voiceChannel)
+        {
+            if(args.length == 0)
+            {
+                message.channel.send(`Current Volume: ${serverQueue.dispatcher.volume}`);
+            }
+            else
+            {
+                let currentVolume = serverQueue.dispatcher.volume;
+                
+                let volume = parseInt(args[0]);
+
+                if(currentVolume == volume) return;
+                
+                if((volume / 100) > 0)
+                {
+                    volume /= 100;
+                }
+
+                if(volume >= 1) 
+                {
+                    message.channel.send(`Volume passou do limite: ${volume} of ${serverQueue.dispatcher.volume}`);
+                    volume = 1;
+                }
+                serverQueue.dispatcher.setVolumeLogarithmic(volume);
+            }
+        }
+        
+    },
     async Execute(message : Message, serverQueue : MusicQueue)
     {
         const args = message.content.split(" ");
@@ -175,21 +195,11 @@ export default
 
         if(!serverQueue)
         {
-            const queueContruct = <{
-                textChannel : TextChannel,
-                voiceChannel : VoiceChannel,
-                connection: VoiceConnection | null,
-                songs: Array<{
-                    title: string;
-                    url: string;
-                    description: string;
-                    thumbnail: string;
-                }>,
-                volume: number,
-                playing: boolean
-            }>{
+            const queueContruct = <MusicQueue>
+            {
                 textChannel : message.channel,
                 voiceChannel: voiceChannel,
+                dispatcher: null,
                 connection: null,
                 songs: [],
                 volume: 5,
@@ -230,11 +240,11 @@ export default
             return;
         }
 
-        const dispatcher = serverQueue.connection!.play(song.url).on("finish", () => {
+        serverQueue.dispatcher = serverQueue.connection!.play(song.url).on("finish", () => {
             serverQueue.songs.shift();
             this.PlayURL(guild, serverQueue.songs[0]);
         });
-        dispatcher!.setVolumeLogarithmic(serverQueue.volume / 5);
+        serverQueue.dispatcher!.setVolumeLogarithmic(serverQueue.volume / 5);
         let embed = new MessageEmbed();
         let description = `Start Playing: ${song.title}\n` +
             `Description: \n\t${song.description}\n`;
@@ -253,11 +263,11 @@ export default
             return;
         }
 
-        const dispatcher = serverQueue.connection!.play(ytdl(song.url)).on('finish', () => {
+        serverQueue.dispatcher = serverQueue.connection!.play(ytdl(song.url)).on('finish', () => {
             serverQueue.songs.shift();
             this.Play(guild, serverQueue.songs[0]);
         });
-        dispatcher!.setVolumeLogarithmic(serverQueue.volume / 5);
+        serverQueue.dispatcher!.setVolumeLogarithmic(serverQueue.volume / 5);
         let embed = new MessageEmbed();
         let description = `Start Playing: ${song.title}\n` +
             `Description: \n\`\`\`${song.description}\`\`\`\n`;

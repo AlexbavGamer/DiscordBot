@@ -1,6 +1,6 @@
 import { MaytrixXCommand } from "../../domain/MaytrixXCommand";
 import { MaytrixXClient } from "../../domain/MaytrixXClient";
-import { Message } from "discord.js";
+import { Message, Collection, MessageEmbed } from "discord.js";
 
 export default class extends MaytrixXCommand
 {
@@ -16,23 +16,30 @@ export default class extends MaytrixXCommand
 
     
     run(message: Message, level: number, flags: string[], ...args: string[]): void {
-        const serverQueue = this.client.queue.get(message.guild!.id);
-
-        if(serverQueue!.songs.length > 0)
+        const serverQueue = this.client.queue.get(message.guild?.id!);
+        if((serverQueue?.connection) && serverQueue?.songs!.length > 0)
         {
-            let songs = "";
+            let songs : Collection<number, string> = new Collection();
 
-            serverQueue?.songs.forEach(song => {
-                songs += `**[${serverQueue?.songs.indexOf(song)+1}]**: ${song.title}`;
+            let embed = new MessageEmbed();
+
+            serverQueue.songs.forEach((song, index) => {
+                songs.set(index, song.title);
             });
 
-            message.channel.send(songs, {
-                code: 'asciidoc'
+            embed.setTitle(`Songs Queue`);
+
+            embed.setDescription(`List of Songs`);
+
+            songs.forEach((song, index) => {
+                embed.addField(index.toString(), song, true);
             });
+
+            message.channel.send(embed);
         }
         else
         {
-            message.channel.send("não há musicas em fila.");
+            message.channel.send(this.client.translateGuildText(message.guild!, "no_songs_on_queue", message.author!.username));
         }
     }
 }

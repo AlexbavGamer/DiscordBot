@@ -1,4 +1,4 @@
-import { Client, ClientEvents, Guild, Message, Collection, ClientApplication, TextChannel, VoiceChannel, VoiceConnection } from "discord.js";
+import { Client, ClientEvents, Guild, Message, Collection, ClientApplication, TextChannel, VoiceChannel, VoiceConnection, StreamDispatcher, StreamDispatcher } from "discord.js";
 import { MaytrixXConfig, MaytrixXDefaultSettings } from "./MaytrixXConfig";
 import { MaytrixXCommand } from "./MaytrixXCommand";
 import { load as loadCommands } from "./CommandHandler";
@@ -19,6 +19,7 @@ export interface MusicQueue
     textChannel : TextChannel,
     voiceChannel : VoiceChannel,
     connection: VoiceConnection | null,
+    dispatcher: StreamDispatcher | null,
     songs: Array<{
         title: string;
         url: string;

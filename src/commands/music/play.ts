@@ -22,7 +22,7 @@ class PlayCommand extends MaytrixXCommand
     {
         const serverQueue = this.client.queue.get(message.guild!.id);
 
-        MusicUtil.Execute(message, serverQueue);
+        MusicUtil.Execute(message, serverQueue!);
     }
 }
 
