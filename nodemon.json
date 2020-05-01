@@ -1,0 +1,18 @@
+{
+  "delay": 2000,
+  "verbose": true,
+  "ignore": [
+    "dist",
+    "public"
+  ],
+  "watch": [
+    "src/dashboard/server/**/*.{ts,tsx}",
+    "config",
+    "webpack"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js json ts tsx",
+  "exec": "ts-node --inspect src/main.ts"
+}

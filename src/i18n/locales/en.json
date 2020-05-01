@@ -1,0 +1,40 @@
+{
+    "yes": "yes",
+    "y": "y",
+    "n": "n",
+    "no": "no",
+
+    "say_prefix": "my prefix in this server is %s",
+    "command_only_guild": "This command is unavailable via private message. Please run this command in a guild.",
+    "command_only_dm": "This command is via private message. Please run this command in a private.",
+    "command_no_permission": "You do not have permission to use this command. You permission level is %d (%s) This command requires level %s (%s)",
+    "action_cancelled": "Action cancelled.",
+
+    "conf_key_add": "Please specify a key to add",
+    "conf_already_key": "This key already exists in the default settings",
+    "conf_need_value": "Please specify a value",
+    "conf_setted": "%s successfully added with the value of %s",
+
+    "conf_key_edit": "Please specify a key to edit",
+    "conf_key_not_exist": "This key does not exist in the settings",
+    "conf_edited": "%s successfully edited to %s",
+
+    "conf_reset_key": "Please specify a key to reset.",
+    "conf_key_cant_override": "This key does not have an override and is already using defaults.",
+    "conf_key_reseted": "all settings was successfully reset to default.",
+    "conf_key_reseted_key": "%s was successfully reset to default.",
+    "conf_key_no_reseted": "Your setting \"`%s`\" for remains at \"`%s`\"",
+    "conf_key_ask_reset": "Are you sure you want to reset all to the default value?",
+    "conf_key_ask_reset_key": "Are you sure you want to reset %s to the default value?",
+
+    "conf_key_delete": "Please specify a key to delete.",
+    "conf_key_ask_delete": "Are you sure you want to permanently delete %s from all guilds? This **CANNOT** be undone.",
+    "conf_key_set": "Please specify a new value",
+    "conf_already_key_set": "This setting already has that value!",
+    "conf_deleted": "%s was successfully deleted.",
+
+    "conf_key_get": "Please specify a key to view",
+    "conf_key_global_value": "\nThis is the default global default value.",
+    "conf_key_get_value": "The value of %s is currently %s%s",
+    "default_settings": "Bot Default Settings"
+}
