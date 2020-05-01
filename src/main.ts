@@ -37,6 +37,16 @@ declare global
     }
 }
 
+declare global
+{
+  interface String
+  {
+    Truncate(maxLength : number, side : string, ellipsis : string) : string;
+    replaceAll(find : string, replace : string) : string;
+    toProperCase() : string;
+  }
+}
+
 
 String.prototype.replaceAll = function(find : string, replace : string)
 {
