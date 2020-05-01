@@ -303,7 +303,7 @@ export default
             if(err) return console.log(err);
 
             let resp = '';
-            const videos = data.videos.slice(0, 9);
+            const videos = data.videos.slice(0, 10);
 
             videos.forEach((_, i) => {
                 resp += `**[${(i + 1)}]:** \`${videos[i].title}\`\n`;

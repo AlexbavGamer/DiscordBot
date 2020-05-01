@@ -22,7 +22,7 @@ class ReadyEvent extends MaytrixXEvent
         `Prefixos: ${this.client.guilds.cache.map((guild) => {
             return this.client.getSettings(guild).prefix
         }).join(", ")}`);
-        let teamApplication = <Team>this.client.application.owner;
+        let teamApplication = <Team>this.client.application.owner!;
         if(this.client.owners.length < 1) teamApplication ? this.client.owners.push(teamApplication.members.keys()) : this.client.owners.push(this.client.application.owner?.id);
         setInterval(() => {
             this.client.owners = [];
