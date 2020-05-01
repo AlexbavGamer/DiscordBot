@@ -189,13 +189,28 @@ export class MaytrixXClient extends Client
         this._commands = loadCommands(this);
         this._aliases = new Map();
         this._currentActivitie = 0;
-        this._commands.forEach(cmd => {
+        this._config = config;
+        
+        this._levelCache = new Map();
+        for(let i = 0; i < this.config.permLevels!.length; i++)
+        {
+            const thisLevel = this.config.permLevels[i];
+            this._levelCache.set(thisLevel.name, thisLevel.level);
+        }
+
+        this._commands.forEach(cmd => 
+        {
+            if(cmd.conf.permLevel && !(this.levelCache?.has(cmd.conf.permLevel)))
+            {
+                let permKeys = Array.from(this.levelCache.keys()).filter(key => key.includes(cmd.conf.permLevel));
+                console.log(`Invalid permLevel ${cmd.conf.permLevel} from ${cmd.conf.name}, you mean ${permKeys.join(",")}?`);
+                this.unloadCommand(cmd.conf.name);
+            }
             cmd.conf.aliases?.forEach(alias => {
                 this._aliases.set(alias, cmd.conf.name);
             });
         });
         this._events = loadEvents(this);
-        this._config = config;
         this.generateInvite("ADMINISTRATOR").then(inviteLink =>
         {
             this._config.inviteLink = inviteLink;
@@ -211,15 +226,8 @@ export class MaytrixXClient extends Client
             });
         });
 
-        this._levelCache = new Map();
-        for(let i = 0; i < this.config.permLevels!.length; i++)
-        {
-            const thisLevel = this.config.permLevels[i];
-            this._levelCache.set(thisLevel.name, thisLevel.level);
-        }
         this.fetchApplication().then((app) => {
             this._application = app;
-            setup(this);
         });
 
     }

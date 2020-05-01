@@ -26,7 +26,6 @@ const load = (client : MaytrixXClient) : Collection<string, MaytrixXCommand> => 
                 const filePath = path.resolve(cmd_folder, folder, file);
                 const pull = _checkForInterop(require(filePath));
                 const cmd = new pull(client) as MaytrixXCommand;
-
                 cmd.path = filePath;
                 cmds.set(cmd.conf.name, cmd);
                 delete require.cache[filePath];
