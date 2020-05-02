@@ -11,7 +11,6 @@ class MessageEvent extends MaytrixXEvent
 
     async run(message : Message)
     {
-        if(this.client.isWebSetup) return;
         if(message.author.bot) return; 
         const settings = this.client.getSettings(message!.guild!);
  
