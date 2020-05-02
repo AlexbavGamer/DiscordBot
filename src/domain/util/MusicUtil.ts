@@ -2,7 +2,7 @@ import { VoiceConnection, Message, MessageEmbed, VoiceChannel, TextChannel, Guil
 import ytdl from "ytdl-core";
 import searchYoutube from "yt-search";
 import { MusicQueue } from "../MaytrixXClient";
-import { sounds } from "soundoftext-js";
+const { sounds } = require("soundoftext-js");
 export default
 {
     async ExecuteSearch(url : string, message : Message, serverQueue : any)
