@@ -1,0 +1,17 @@
+{{#if user}}
+    <div class="jumbotrom">
+        <h1>{{bot.user.username}} Dashboard</h1>
+        <p class="lead">
+            {{#compare bot.application.description.length ">" 3}}
+                {{bot.application.description}}
+            {{else}}
+                No description given.
+            {{/compare}}
+        </p>
+        <p class="lead">
+            <a href="/commands" class="btn btn-primary" role="button">Command help</a>
+        </p>
+    </div>
+{{else}}
+
+{{/if}}

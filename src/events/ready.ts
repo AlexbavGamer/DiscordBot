@@ -35,7 +35,7 @@ class ReadyEvent extends MaytrixXEvent
             if(!this.client.config.defaultSettings) throw new Error("defaultSettings not present in MaytrixConfig.ts or settings database. Bot cant load.");
             this.client.settings.set("default", this.client.config.defaultSettings);
         }
-
+        this.client.initSystems();
         console.log(`[Ready]: ${this.client.user?.tag}, ready to serve ${this.client.users.cache.size} users in ${this.client.guilds.cache.size}`);
     }
 }

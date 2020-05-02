@@ -1,18 +1,19 @@
-import { Client, ClientEvents, Guild, Message, Collection, ClientApplication, TextChannel, VoiceChannel, VoiceConnection, StreamDispatcher, StreamDispatcher } from "discord.js";
+import { Client, ClientEvents, Guild, Message, Collection, ClientApplication, TextChannel, VoiceChannel, VoiceConnection, StreamDispatcher } from "discord.js";
 import { MaytrixXConfig, MaytrixXDefaultSettings } from "./MaytrixXConfig";
 import { MaytrixXCommand } from "./MaytrixXCommand";
 import { load as loadCommands } from "./CommandHandler";
 import { load as loadEvents} from "./EventHandler";
 import { MaytrixXEvent } from "./MaytrixXEvent";
-import * as moment from "moment";
+import moment = require("moment");
 import 'moment/locale/pt-br';
 import Enmap = require("enmap");
 import { inspect, format } from "util";
 import lodash = require("lodash");
 import * as i18n from "i18n";
 import { Server } from "http";
-import { setup } from "../dashboard/server";
+import { setup } from "../dashboard";
 import { start } from "../i18n/start";
+import { Application } from "express";
 
 export interface MusicQueue
 {
@@ -40,15 +41,9 @@ export class MaytrixXClient extends Client
     private readonly _events : Map<string, MaytrixXEvent>;
     private readonly _settings : Enmap;
     private readonly _levelCache : Map<string, number>;
-    private readonly _isWebSetup : boolean;
     private _queue : Map<string, MusicQueue> = new Map();
 
     public owners = new Array();
-
-    public get isWebSetup()
-    {
-        return this._isWebSetup;
-    }
 
     public get queue()
     {
@@ -66,7 +61,7 @@ export class MaytrixXClient extends Client
     }
 
     private _application !: ClientApplication;
-    private _site !: Server;
+    private _site !: Application;
 
     public get application()
     {
@@ -96,7 +91,7 @@ export class MaytrixXClient extends Client
         return this._site;
     }
 
-    public set site(site : Server)
+    public set site(site : Application)
     {
         this._site = site;
     }
@@ -179,11 +174,16 @@ export class MaytrixXClient extends Client
         this._settings.set("activities", activities);
     }
 
-    constructor(config : MaytrixXConfig, isWebSetup: boolean = false)
+    initSystems()
+    {
+        start(this);
+        setup(this);
+    }
+
+    constructor(config : MaytrixXConfig)
     {
         super();
         start(this);
-        this._isWebSetup = isWebSetup;
         moment.defineLocale("pt-BR", {});
         this.login(config.token!);
 
