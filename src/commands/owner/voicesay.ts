@@ -1,7 +1,6 @@
 import { MaytrixXCommand } from "../../domain/MaytrixXCommand";
 import { MaytrixXClient } from "../../domain/MaytrixXClient";
 import { Message } from "discord.js";
-import { sounds } from "soundoftext-js";
 import MusicUtil from "../../domain/util/MusicUtil";
 export default class extends MaytrixXCommand
 {
