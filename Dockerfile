@@ -1,4 +1,4 @@
-FROM node:boron
+FROM node:latest
 WORKDIR /app
 COPY . .
 RUN npm install -g
