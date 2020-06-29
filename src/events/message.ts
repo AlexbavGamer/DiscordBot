@@ -12,7 +12,8 @@ class MessageEvent extends MaytrixXEvent
     async run(message : Message)
     {
         if(message.author.bot) return; 
-        const settings = this.client.getSettings(message!.guild!);
+
+        const settings = message.settings = this.client.getSettings(message!.guild!);
  
         const prefixMention = new RegExp(`^<@!?${this.client.user?.id}> ?$`);
         if(message.content.match(prefixMention))
@@ -61,6 +62,8 @@ class MessageEvent extends MaytrixXEvent
                  return;
              }
         }
+
+        message.author.permLevel = level;
  
         let flags = [];
         while(args[0] && args[0][0] === "-")

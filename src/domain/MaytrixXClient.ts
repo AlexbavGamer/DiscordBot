@@ -10,7 +10,6 @@ import Enmap = require("enmap");
 import { inspect, format } from "util";
 import lodash = require("lodash");
 import * as i18n from "i18n";
-import { Server } from "http";
 import { setup } from "../dashboard";
 import { start } from "../i18n/start";
 import { Application } from "express";
@@ -236,11 +235,15 @@ export class MaytrixXClient extends Client
     loadCommand(commandName : string)
     {
         let command = loadCommands(this).get(commandName);
-        this.commands.set(command!.conf.name, command!);
-        command!.conf.aliases!.forEach(alias => {
-            this.aliases.set(alias, command!.conf.name!);
-        });
-        return false;
+        if(command)
+        {
+            this.commands.set(command!.conf.name, command!);
+            command!.conf.aliases!.forEach(alias => {
+                this.aliases.set(alias, command!.conf.name!);
+            });
+            return false;
+        }
+        return true;
     }
 
     async unloadCommand(commandName : string)

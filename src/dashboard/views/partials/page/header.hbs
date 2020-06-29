@@ -43,7 +43,7 @@
           <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="/commands">Commands</a></li>
           {{#compare bot.application.botPublic "==" true }}
-             <li class="nav-item"><a class="nav-link disabled" href="https://discordapp.com/oauth2/authorize?client_id={{bot.application.id}}&scope=bot&response_type=code&redirect_uri=">Add to Server</a></li>
+             <li class="nav-item"><a class="nav-link disabled" href="https://discordapp.com/oauth2/authorize?client_id={{bot.application.id}}&scope=bot&response_type=code&redirect_uri={{getAuthRedirectUri}}">Add to Server</a></li>
           {{else}}
 
           {{/compare}}

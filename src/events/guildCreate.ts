@@ -17,8 +17,10 @@ export default class extends MaytrixXEvent
 
         if(guildSettings.language == null)
         {
-            let region = guild.region;
-            console.log(`Guild Region: ${region}`);
+            let language = guild.getLanguageByRegion();
+            this.client.writeSettings(guild!.id, {
+                "language": language
+            });
         }
     }
 }

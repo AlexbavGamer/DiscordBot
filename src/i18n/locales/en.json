@@ -38,5 +38,17 @@
     "conf_key_get_value": "The value of %s is currently %s%s",
     "default_settings": "Bot Default Settings",
 
-    "no_songs_on_queue": "Sorry %s but not have songs on queue"
+    "no_songs_on_queue": "Sorry %s but not have songs on queue",
+    "play_user_no_channel": "You need to be in voice channel to play music!",
+    "play_no_permission": "I need the permissions to join and speak in your voice channel!",
+    "music_added_queue": "%s has been added to queue!",
+    "music_start_playing": "Start Playing: %s",
+    "music_description":"Description: \n\t%s",
+    "current_volume": "Current Volume: %d",
+    "volume_reached_limit": "Volume crossed the threshold: %d of %d",
+    "__comment": "Reload Command",
+    "reload_no_args": "Must provide a command to reload. Derp.",
+    "reload_unloading_error": "Error Unloading: %s",
+    "reload_loading_error": "Error Loading: %s",
+    "reload_success": "The command `%s` has been reloaded"
 }

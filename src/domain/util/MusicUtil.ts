@@ -1,7 +1,7 @@
 import { VoiceConnection, Message, MessageEmbed, VoiceChannel, TextChannel, Guild, MessageCollector, VolumeInterface } from "discord.js";
 import ytdl from "ytdl-core";
 import searchYoutube from "yt-search";
-import { MusicQueue } from "../MaytrixXClient";
+import { MusicQueue, MaytrixXClient } from "../MaytrixXClient";
 const { sounds } = require("soundoftext-js");
 export default
 {
@@ -11,12 +11,12 @@ export default
 
         if(!voiceChannel)
         {
-            return message.channel.send(`You need to be in voice channel to play music!`);
+            return message.channel.send(message.translateGuildText("play_user_no_channel"));
         }
         const permissions = voiceChannel.permissionsFor(message!.client!.user!);
         if(!permissions!.has("CONNECT") || !permissions!.has("SPEAK"))
         {
-            return message.channel.send(`I need the permissions to join and speak in your voice channel!`);
+            return message.channel.send(message.translateGuildText("play_no_permission"));
         }
 
         const songInfo = await ytdl.getInfo(`${url}`);
@@ -64,21 +64,18 @@ export default
     },
     async ExecuteCustomURL(message : Message, args : Array<string>, serverQueue: MusicQueue)
     {
-
-
         const voiceChannel = message.member!.voice.channel;
-
         if(!voiceChannel)
         {
-            return message.channel.send(`You need to be in voice channel to play music!`);
+            return message.channel.send(message.translateGuildText("play_user_no_channel"));
         }
         const permissions = voiceChannel.permissionsFor(message!.client!.user!);
         if(!permissions!.has("CONNECT") || !permissions!.has("SPEAK"))
         {
-            return message.channel.send(`I need the permissions to join and speak in your voice channel!`);
+            return message.channel.send(message.translateGuildText("play_no_permission"));
         }
 
-        let url = await sounds.create({text: args.join(" "), voice: 'pt-BR'});
+        let url = await sounds.create({text: args.join(" "), voice: message.guild?.getLanguageByRegion()});
 
         let song = <{
             title: string;
@@ -112,7 +109,7 @@ export default
             {
                 var connection = await voiceChannel.join();
                 queueContruct.connection = connection;
-                this.PlayURL(message.guild!, queueContruct.songs[0]);
+                this.PlayURL(message, message.guild!, queueContruct.songs[0]);
             }
             catch(err)
             {
@@ -124,7 +121,7 @@ export default
         else
         {
             serverQueue.songs.push(song);
-            return message.channel.send(`${song.title} has been added to queue!`);
+            return message.channel.send(message.translateGuildText("music_added_queue", song.title));
         }
     },
     async Volume(message : Message, args : Array<string>, serverQueue : MusicQueue)
@@ -133,18 +130,18 @@ export default
 
         if(!voiceChannel)
         {
-            return message.channel.send(`You need to be in voice channel to play music!`);
+            return message.channel.send(message.translateGuildText("play_user_no_channel"));
         }
         const permissions = voiceChannel.permissionsFor(message!.client!.user!);
         if(!permissions!.has("CONNECT") || !permissions!.has("SPEAK"))
         {
-            return message.channel.send(`I need the permissions to join and speak in your voice channel!`);
+            return message.channel.send(message.translateGuildText("play_no_permission"));
         }
         if(serverQueue.dispatcher && serverQueue.voiceChannel)
         {
             if(args.length == 0)
             {
-                message.channel.send(`Current Volume: ${serverQueue.dispatcher.volume}`);
+                message.channel.send(message.translateGuildText("current_volume", serverQueue.dispatcher.volume));
             }
             else
             {
@@ -161,7 +158,7 @@ export default
 
                 if(volume >= 1) 
                 {
-                    message.channel.send(`Volume passou do limite: ${volume} of ${serverQueue.dispatcher.volume}`);
+                    message.channel.send(message.translateGuildText("volume_reached_limit", volume, serverQueue.dispatcher.volume));
                     volume = 1;
                 }
                 serverQueue.dispatcher.setVolumeLogarithmic(volume);
@@ -177,12 +174,12 @@ export default
 
         if(!voiceChannel)
         {
-            return message.channel.send(`You need to be in voice channel to play music!`);
+            return message.channel.send(message.translateGuildText("play_user_no_channel"));
         }
         const permissions = voiceChannel.permissionsFor(message!.client!.user!);
         if(!permissions!.has("CONNECT") || !permissions!.has("SPEAK"))
         {
-            return message.channel.send(`I need the permissions to join and speak in your voice channel!`);
+            return message.channel.send(message.translateGuildText("play_no_permission"));
         }
 
         const songInfo = await ytdl.getInfo(args[1]);
@@ -226,10 +223,10 @@ export default
         else
         {
             serverQueue.songs.push(song);
-            return message.channel.send(`${song.title} has been added to queue!`);
+            return message.channel.send(message.translateGuildText("music_added_queue", song.title));
         }
     },
-    PlayURL(guild : Guild, song : { title : string, url : string, description: string, thumbnail : string })
+    PlayURL(message : Message, guild : Guild, song : { title : string, url : string, description: string, thumbnail : string })
     {
         let serverQueue = global.bot.queue.get(guild.id) as MusicQueue;
 
@@ -242,12 +239,14 @@ export default
 
         serverQueue.dispatcher = serverQueue.connection!.play(song.url).on("finish", () => {
             serverQueue.songs.shift();
-            this.PlayURL(guild, serverQueue.songs[0]);
+            this.PlayURL(message, guild, serverQueue.songs[0]);
         });
         serverQueue.dispatcher!.setVolumeLogarithmic(serverQueue.volume / 5);
         let embed = new MessageEmbed();
-        let description = `Start Playing: ${song.title}\n` +
-            `Description: \n\t${song.description}\n`;
+        
+        let description = `${message.translateGuildText("music_start_playing", song.title)}\n` +
+        message.translateGuildText("music_description", song.description);
+
 
         embed.setDescription(description);
 

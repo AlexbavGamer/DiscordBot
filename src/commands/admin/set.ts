@@ -26,32 +26,32 @@ class SetConfCommand extends MaytrixXCommand
 
         if(action === "edit")
         {
-            if (!key) return message.reply(this.client.translateGuildText(message!.guild!, "conf_key_edit"));
-            if (!defaults[key]) return message.reply(this.client.translateGuildText(message!.guild!, "conf_key_not_exist"));
+            if (!key) return message.reply(message.translateGuildText("conf_key_edit"));
+            if (!defaults[key]) return message.reply(message.translateGuildText("conf_key_not_exist"));
             const joinedValue = value.join(" ");
-            if (joinedValue.length < 1) return message.reply(this.client.translateGuildText(message!.guild!, "conf_key_set"));
-            if (joinedValue === settings[key]) return message.reply(this.client.translateGuildText(message!.guild!, "conf_already_key_set"));
+            if (joinedValue.length < 1) return message.reply(message.translateGuildText("conf_key_set"));
+            if (joinedValue === settings[key]) return message.reply(message.translateGuildText("conf_already_key_set"));
 
             settings[key] = value.join(" ");
 
             this.client.settings.set(message.guild!.id, settings);
 
-            message.reply(this.client.translateGuildText(message!.guild!, "conf_edited", key, joinedValue));
+            message.reply(message.translateGuildText("conf_edited", key, joinedValue));
         }
         else if(action === "del" || action === "reset")
         {
-            if (!key) return message.reply(this.client.translateGuildText(message!.guild!, "conf_reset_key"));
-            if (!defaults[key] && key !== ("all" || "*")) return message.reply(this.client.translateGuildText(message!.guild!, "conf_key_not_exist"));
-            if (!settings[key] && key !== ("all" || "*")) return message.reply(this.client.translateGuildText(message!.guild!, "conf_key_cant_override"));
+            if (!key) return message.reply(message.translateGuildText("conf_reset_key"));
+            if (!defaults[key] && key !== ("all" || "*")) return message.reply(message.translateGuildText("conf_key_not_exist"));
+            if (!settings[key] && key !== ("all" || "*")) return message.reply(message.translateGuildText("conf_key_cant_override"));
 
-            let y = this.client.translateGuildText(message!.guild!, "y");
-            let yes = this.client.translateGuildText(message!.guild!, "yes");
+            let y = message.translateGuildText("y");
+            let yes = message.translateGuildText("yes");
 
-            let n = this.client.translateGuildText(message!.guild!, "n");
-            let no = this.client.translateGuildText(message!.guild!, "no");
+            let n = message.translateGuildText("n");
+            let no = message.translateGuildText("no");
             if(key === ("all" || "*"))
             {
-                const response = await this.client.awaitReply(message, this.client.translateGuildText(message!.guild!, "conf_key_ask_reset"));
+                const response = await this.client.awaitReply(message, message.translateGuildText("conf_key_ask_reset"));
 
                 if([y, yes].includes(response.toString()))
                 {
@@ -60,32 +60,32 @@ class SetConfCommand extends MaytrixXCommand
                         settings[key] = defaults[key];
                     });
                     this.client.settings.set(message.guild!.id, settings);
-                    message.reply(this.client.translateGuildText(message!.guild!, "conf_key_reseted"));
+                    message.reply(message.translateGuildText("conf_key_reseted"));
                 }
                 else if([n, no].includes(response!.toString()))
                 {
-                    message.reply(this.client.translateGuildText(message!.guild!, "action_cancelled"));
+                    message.reply(message.translateGuildText("action_cancelled"));
                 }
                 return;
             }
-            const response = await this.client.awaitReply(message, this.client.translateGuildText(message!.guild!, "conf_key_ask_reset_key", key));
+            const response = await this.client.awaitReply(message, message.translateGuildText("conf_key_ask_reset_key", key));
 
             if([y, yes].includes(response!.toString()))
             {
                 this.client.settings.delete(message.guild!.id, key);
-                message.reply(this.client.translateGuildText(message!.guild!, "conf_key_reseted_key", key));
+                message.reply(message.translateGuildText("conf_key_reseted_key", key));
             }
             else if([n,no].includes(response!.toString()))
             {
-                message.reply(this.client.translateGuildText(message!.guild!, "conf_key_no_reseted", key, settings[key]))
+                message.reply(message.translateGuildText("conf_key_no_reseted", key, settings[key]))
             }
         }
         else if(action === "get")
         {
-            if (!key) return message.reply(this.client.translateGuildText(message!.guild!, "conf_key_get"));
-            if (!defaults[key]) return message.reply(this.client.translateGuildText(message!.guild!, "conf_key_not_exist"));
-            const isDefault = !settings[key] ? this.client.translateGuildText(message!.guild!, "conf_key_global_value") : "";
-            message.reply(this.client.translateGuildText(message!.guild!, "conf_key_get_value", key, settings[key], isDefault));
+            if (!key) return message.reply(message.translateGuildText("conf_key_get"));
+            if (!defaults[key]) return message.reply(message.translateGuildText("conf_key_not_exist"));
+            const isDefault = !settings[key] ? message.translateGuildText("conf_key_global_value") : "";
+            message.reply(message.translateGuildText("conf_key_get_value", key, settings[key], isDefault));
         }
         else{
             const array : any = [];
@@ -93,7 +93,7 @@ class SetConfCommand extends MaytrixXCommand
             {
                 array.push(`${key}${" ".repeat(20 - key.length)}::  ${value}`);
             });
-            await message.channel.send(`= ${this.client.translateGuildText(message!.guild!, "default_settings")} =\n${array.join("\n")}`, {code: "asciidoc"});
+            await message.channel.send(`= ${message.translateGuildText("default_settings")} =\n${array.join("\n")}`, {code: "asciidoc"});
         }
     }
 }

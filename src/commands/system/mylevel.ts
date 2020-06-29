@@ -12,7 +12,6 @@ class MyLevelCommand extends MaytrixXCommand
             category: "system",
             permLevel: "User",
             guildOnly: true,
-
         });
     }
 

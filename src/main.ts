@@ -1,7 +1,11 @@
 import { MaytrixXClient } from "./domain/MaytrixXClient";
 import { config as dotenv } from "dotenv";
-import { MaytrixXConfig} from "./domain/MaytrixXConfig";
+import { MaytrixXConfig, MaytrixXDefaultSettings} from "./domain/MaytrixXConfig";
 import config from "./domain/MaytrixXConfig";
+import { DiscordAPIError, Message } from "discord.js";
+import i18n from "i18n";
+import { format } from "util";
+import { Guild } from "discord.js";
 
 dotenv({path: __dirname + "/../src/.env"});
 
@@ -37,6 +41,25 @@ declare global
     }
 }
 
+declare module 'discord.js'
+{
+    interface Message
+    {
+        settings : MaytrixXDefaultSettings;
+        translateGuildText(pharse : string, ...args : Array<any>) : string;
+    }
+
+    interface User
+    {
+        permLevel : number;
+    }
+
+    interface Guild
+    {
+        getLanguageByRegion() : string;
+    }
+}
+
 declare global
 {
   interface String
@@ -58,6 +81,37 @@ String.prototype.toProperCase = function()
     return this.replace(/([^\W_]+[^\s-]*) */g, (txt : string) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 }
 
+Guild.prototype.getLanguageByRegion = function()
+{
+    var language : string = "en";
+    switch(this.region)
+    {
+        case "brazil": 
+        {
+            language = "pt-br";
+            break;
+        }
+        case "us-central":
+        {
+            language = "en";
+            break;
+        }
+    }
+    return language;
+}
+
+Message.prototype.translateGuildText = function(pharse : string, ...args: any[])
+{
+    if(this.channel.type != "dm")
+    {
+        var guildSettings = this.settings;
+        return format(i18n.__({
+            locale: guildSettings.language,
+            phrase: pharse
+        }), ...args);
+    }
+    return "";
+}
 String.prototype.Truncate = function(maxLength : number, side : string, ellipsis : string = "...") : string
 {
     var str = this;

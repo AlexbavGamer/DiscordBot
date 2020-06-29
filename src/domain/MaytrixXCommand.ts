@@ -52,6 +52,6 @@ export abstract class MaytrixXCommand
 
     async shutdown(client : MaytrixXClient) 
     {
-
+        this.client.unloadCommand(this.conf.name);
     }
 }

@@ -57,7 +57,8 @@ const config = <MaytrixXConfig>
     inviteLink: "",
     admins: [],
     support: [],
-    token: "NTc0Mjc3NjE2MjcwMzExNDQ2.XqS48Q.AiLKO-OGp-UOxWCLlcmkQdoeLcs",
+    donators: [],
+    token: "NTc0Mjc3NjE2MjcwMzExNDQ2.Xvi6lA.uGynNInapZLc2680M9ep8V8GOjA",
     mongo: "mongodb://admin:001998Br@ds231207.mlab.com:31207/discordbot",
     youtubeApi: "AIzaSyB59Xg9vt1nR0GmC311t6W5k1kaPzvbfWk",
     activitieType: "WATCHING",
@@ -137,6 +138,13 @@ const config = <MaytrixXConfig>
                     return false;
                 }
             }
+        },
+        {
+            level: 5,
+            name: "Donator",
+            check: (message, client) => {
+                return client!.config.donators.includes(message!.author!.id);
+            },
         },
         {
             level: 4,

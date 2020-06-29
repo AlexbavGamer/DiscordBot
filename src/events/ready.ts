@@ -26,7 +26,6 @@ class ReadyEvent extends MaytrixXEvent
         if(this.client.owners.length < 1) teamApplication ? this.client.owners.push(teamApplication.members.keys()) : this.client.owners.push(this.client.application.owner?.id);
         setInterval(() => {
             this.client.owners = [];
-            
             teamApplication ? this.client.owners.push(teamApplication.members.keys()) : this.client.owners.push(this.client.application.owner?.id);
         }, 60000);
 

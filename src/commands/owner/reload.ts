@@ -18,15 +18,14 @@ class ReloadCommand extends MaytrixXCommand
 
     async run(message : Message, level : number, [commandName, ...values] : [string, string[]])
     {
-        if(!commandName)  return message.reply("Must provide a command to reload. Derp.");
+        if(!commandName)  return message.reply(message.translateGuildText("reload_no_args"));
         let response = await this.client.unloadCommand(commandName);
-        if(response) return message.reply(`Error Unloading: ${response}`);
+        if(response) return message.reply(message.translateGuildText("reload_unloading_error", response));
 
         response = this.client.loadCommand(commandName);
-        if (response) return message.reply(`Error Loading: ${response}`);
+        if (response) return message.reply(message.translateGuildText("reload_loading_error", response));
 
-        message.reply(`The command \`${commandName}\` has been reloaded`);
-
+        message.reply(message.translateGuildText("reload_success", commandName));
     }
 }
 
