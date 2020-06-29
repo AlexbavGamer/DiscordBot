@@ -1,6 +1,4 @@
-FROM alpine:latest
-COPY . /app
+FROM node:boron
 WORKDIR /app
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y nodejs
+copy . .
 CMD ["npm", "start"]
