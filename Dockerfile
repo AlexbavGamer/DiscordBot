@@ -1,4 +1,4 @@
 FROM node:boron
 WORKDIR /app
-copy . .
+COPY . .
 CMD ["npm", "start"]
