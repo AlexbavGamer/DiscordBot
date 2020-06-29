@@ -1,5 +1,5 @@
 FROM node:boron
 WORKDIR /app
 COPY . .
-RUN npm install
+RUN npm install -g
 CMD ["npm", "start"]
