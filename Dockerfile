@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM node:slim
 WORKDIR /app
 COPY . .
 RUN npm install
