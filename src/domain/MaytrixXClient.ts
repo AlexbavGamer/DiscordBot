@@ -15,7 +15,7 @@ import { setup } from "../dashboard";
 import { start } from "../i18n/start";
 import { Application } from "express";
 import { basename, resolve } from "path";
-import { createWriteStream, existsSync, mkdirSync } from "fs";
+import { createWriteStream, existsSync, mkdirSync, unlink } from "fs";
 import { gzip } from "zlib";
 
 export interface MusicQueue
@@ -192,13 +192,22 @@ export class MaytrixXClient extends Client
     {
         const fileName = basename(url);
         
-        let file = createWriteStream(resolve(dest, fileName));
-        
+        let filePath = resolve(dest, fileName);        
+        let file = createWriteStream(filePath);
 
         return await new Promise((resolve, reject) => {
             if(!existsSync(dest))
             {
                 mkdirSync(dest);
+            }
+            if(existsSync(filePath))
+            {
+                unlink(filePath, (err) => {
+                    if(err)
+                    {
+                        console.log(err);
+                    }
+                });
             }
 
             let stream = request({
