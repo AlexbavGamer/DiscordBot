@@ -297,15 +297,15 @@ export class MaytrixXClient extends Client
 
     loadCommandFromFile(command : MaytrixXCommand)
     {
-        if(!this.commands.has(command.conf.name) && !this.commands.has(this.aliases.get(command.conf.name)!))
+        if(this.commands.has(command.conf.name) && this.commands.has(this.aliases.get(command.conf.name)!))
         {
-            this.commands.set(command!.conf.name, command!);
-            command!.conf.aliases!.forEach(alias => {
-                this.aliases.set(alias, command!.conf.name!);
-            });
-            return true;
+            this.unloadCommand(command.conf.name);
         }
-        return false;
+        this.commands.set(command!.conf.name, command!);
+        command!.conf.aliases!.forEach(alias => {
+            this.aliases.set(alias, command!.conf.name!);
+        });
+        return true;
     }
 
     async unloadCommand(commandName : string)
