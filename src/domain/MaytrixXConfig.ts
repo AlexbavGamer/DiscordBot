@@ -76,7 +76,7 @@ const config = <MaytrixXConfig>
     },
     defaultSettings:
     {
-        prefix: "-",
+        prefix: "!",
         modLogChannel: "mod-log",
         modRole: "Moderator",
         adminRole: "Administrator",

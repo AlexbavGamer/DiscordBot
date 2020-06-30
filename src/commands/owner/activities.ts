@@ -16,7 +16,7 @@ class ActivitiesCommand extends MaytrixXCommand
         });
     }
 
-    async run(message : Message, level : number, args : string[], flags: string[])
+    async run(message : Message, level : number, args : Array<string>, flags : Array<any>)
     {
         let flag = flags[0];
 

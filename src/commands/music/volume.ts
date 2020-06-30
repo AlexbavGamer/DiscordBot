@@ -11,7 +11,7 @@ export default class extends MaytrixXCommand
             name: "volume",
             aliases: ["vol"],
             permLevel: "User",
-            category: "music"
+            category: "youtube"
         });
     }
 

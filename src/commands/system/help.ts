@@ -18,7 +18,7 @@ class HelpCommand extends MaytrixXCommand
         });
     }
 
-    run(message : Message, level : number, args : Array<string>)
+    async run(message : Message, level : number, args : Array<string>)
     {
         if(!args[0])
         {
@@ -46,8 +46,9 @@ class HelpCommand extends MaytrixXCommand
             embed.setTitle(`Olá ${message.author.username} para ver os comandos apenas reaja.`);
 
             var desc = '';
-            CommandCategories.forEach((cmds, cat) => {
-                let emoji = CommandCategoryEmojis[cat] == null ? CommandCategoryEmojis[cat] : null;
+            CommandCategories.forEach((cmds, cat) => 
+            {
+                let emoji = CommandCategoryEmojis[cat];
                 if(emoji)
                 {
                     desc += `${emoji} - ${cat} (${CommandCategories.get(cat)!.length})\n`;
@@ -58,7 +59,7 @@ class HelpCommand extends MaytrixXCommand
             const sendMessage = message.channel.send(embed);
 
             CommandCategories.forEach(async (_, cat) => {
-                let emoji = CommandCategoryEmojis[cat].toString();
+                let emoji = CommandCategoryEmojis[cat] ?? CommandCategoryEmojis[cat].toString();
 
                 (await sendMessage).react(emoji);
             });

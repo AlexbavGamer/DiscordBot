@@ -29,6 +29,15 @@ class ReadyEvent extends MaytrixXEvent
             teamApplication ? this.client.owners.push(teamApplication.members.keys()) : this.client.owners.push(this.client.application.owner?.id);
         }, 60000);
 
+        setInterval(() => {
+
+            this.client.user?.setActivity({
+                name: this.client.getRandomActivitie(),
+                type: this.client.config.activitieType,
+                url: this.client.config.activitieURL
+            });
+        }, 2500);
+
         if(!this.client.settings.has("default"))
         {
             if(!this.client.config.defaultSettings) throw new Error("defaultSettings not present in MaytrixConfig.ts or settings database. Bot cant load.");

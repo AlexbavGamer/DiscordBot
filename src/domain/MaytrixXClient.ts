@@ -138,6 +138,11 @@ export class MaytrixXClient extends Client
         return this._settings.get("activities") as string[];
     }
 
+    getRandomActivitie()
+    {
+        return this.formatArgs(lodash.sample(this.getActivities())!);
+    }
+
     addActivitie(value : string)
     {
         let activities = this.getActivities() || null;
@@ -275,7 +280,9 @@ export class MaytrixXClient extends Client
         }
         text = (<string>text).replace(/`/g, "`" + String.fromCharCode(8203))
         .replace(/@/g, "@" + String.fromCharCode(8203))
-        .replace(this.token!, this.config.token);
+        .replace(this.token!, "")
+        .replace(this.config.mongo, "")
+        .replace(this.config.youtubeApi, "");
 
         return text;
     }

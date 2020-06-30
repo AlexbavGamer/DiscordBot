@@ -15,7 +15,7 @@ class UptimeCommand extends MaytrixXCommand
         })
     }
 
-    run(message : Message, level : number, ...args : Array<string>)
+    async run(message : Message, level : number, args : Array<string>)
     {
         const embed = new MessageEmbed()
             .setTitle("** = ESTATISTICAS = **")

@@ -1,5 +1,6 @@
 import { MaytrixXClient } from "./MaytrixXClient";
 import { ClientEvents } from "discord.js";
+import { Client } from "discord.js";
 
 class MaytrixXEvent
 {
@@ -14,7 +15,7 @@ class MaytrixXEvent
         this._client = client;
     }
 
-    run<K extends ClientEvents>(...args: any[])
+    run<K extends ClientEvents>(...args: Array<any>)
     {
         
     }
