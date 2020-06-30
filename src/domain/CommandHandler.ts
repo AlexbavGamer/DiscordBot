@@ -12,6 +12,7 @@ const _checkForInterop = (obj : any) =>
 const loadFromPath = (client : MaytrixXClient, filePath : string) : MaytrixXCommand => {
     const pull = _checkForInterop(require(filePath));
     const cmd = new pull(client) as MaytrixXCommand;
+    client.loadCommand
     cmd.path = filePath;
     delete require.cache[filePath];
     return cmd;
