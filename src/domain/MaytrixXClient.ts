@@ -317,9 +317,12 @@ export class MaytrixXClient extends Client
         {
             await command!.shutdown(this);
         }
-        command.conf.aliases!.forEach(alias => {
-            this.aliases.delete(alias);
-        });
+        if(command.conf.aliases?.length! > 0)
+        {
+            command.conf.aliases!.forEach(alias => {
+                this.aliases.delete(alias);
+            });
+        }
         this.commands.delete(command.conf.name);
         delete require.cache[`${command.getCommandPath()}`];
         return false;
