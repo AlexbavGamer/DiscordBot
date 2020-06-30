@@ -9,10 +9,14 @@ import 'moment/locale/pt-br';
 import Enmap = require("enmap");
 import { inspect, format } from "util";
 import lodash = require("lodash");
+import request from "request";
 import * as i18n from "i18n";
 import { setup } from "../dashboard";
 import { start } from "../i18n/start";
 import { Application } from "express";
+import { basename, resolve } from "path";
+import { createWriteStream, existsSync, mkdirSync } from "fs";
+import { gzip } from "zlib";
 
 export interface MusicQueue
 {
@@ -184,6 +188,46 @@ export class MaytrixXClient extends Client
         setup(this);
     }
 
+    async downloadFile(url : string, dest : string)
+    {
+        const fileName = basename(url);
+        
+        let file = createWriteStream(resolve(dest, fileName));
+        
+
+        return await new Promise((resolve, reject) => {
+            if(!existsSync(dest))
+            {
+                mkdirSync(dest);
+            }
+
+            let stream = request({
+                uri: url,
+                headers:
+                {
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'Accept-Language': 'en-US,en;q=0.9,fr;q=0.8,ro;q=0.7,ru;q=0.6,la;q=0.5,pt;q=0.4,de;q=0.3',
+                    'Cache-Control': 'max-age=0',
+                    'Connection': 'keep-alive',
+                    'Upgrade-Insecure-Requests': '1',
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
+                },
+                gzip: fileName.includes(".zip") || fileName.includes(".rar"),
+            })
+            .pipe(file)
+            .on('finish', (test) => {
+                console.log(`The file is finished downloading..`);
+                resolve(file.path);
+            })
+            .on('error', (error) => {
+                reject(error);
+            });
+        }).catch(err => {
+            console.log(`Something happened: ${err}`);
+        });
+    }
+
     constructor(config : MaytrixXConfig)
     {
         super();
@@ -251,6 +295,19 @@ export class MaytrixXClient extends Client
         return true;
     }
 
+    loadCommandFromFile(command : MaytrixXCommand)
+    {
+        if(!this.commands.has(command.conf.name) && !this.commands.has(this.aliases.get(command.conf.name)!))
+        {
+            this.commands.set(command!.conf.name, command!);
+            command!.conf.aliases!.forEach(alias => {
+                this.aliases.set(alias, command!.conf.name!);
+            });
+            return true;
+        }
+        return false;
+    }
+
     async unloadCommand(commandName : string)
     {
         console.log(`Trying to unload ${commandName}`);
@@ -299,6 +356,21 @@ export class MaytrixXClient extends Client
         catch(e)
         {
             return false;
+        }
+    }
+
+    async awaitAttachment(message : Message, question : string, limit : number = 60000)
+    {
+        const filter = (m : Message) => m.author.id == message.author.id;
+        await message.channel.send(question);
+        try
+        {
+            const collected = await message.channel.awaitMessages(filter, {max : 1, time : limit, errors: ["time"]});
+            return collected!.first()?.attachments.first()!;
+        }
+        catch(e)
+        {
+            return null;
         }
     }
 

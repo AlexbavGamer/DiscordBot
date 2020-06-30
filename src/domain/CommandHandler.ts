@@ -9,6 +9,14 @@ const _checkForInterop = (obj : any) =>
     return obj && obj.__esModule ? obj.default : obj;
 }
 
+const loadFromPath = (client : MaytrixXClient, filePath : string) : MaytrixXCommand => {
+    const pull = _checkForInterop(require(filePath));
+    const cmd = new pull(client) as MaytrixXCommand;
+    cmd.path = filePath;
+    delete require.cache[filePath];
+    return cmd;
+};
+
 const load = (client : MaytrixXClient) : Collection<string, MaytrixXCommand> => {
     const cmds: Collection<string, MaytrixXCommand> = new Collection();
 
@@ -39,4 +47,4 @@ const load = (client : MaytrixXClient) : Collection<string, MaytrixXCommand> => 
     return cmds;
 };
 
-export { load };
+export { load, loadFromPath };
