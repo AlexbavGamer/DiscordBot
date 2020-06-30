@@ -25,7 +25,7 @@ class UptimeCommand extends MaytrixXCommand
             .addField("** Guildas **", `**${this.client.guilds.cache.size.toLocaleString()}**`)	
             .addField("** Canais **", `**${this.client.channels.cache.size.toLocaleString()}**`)	
             .addField("** Discord.js **", `**v${version}**`)	
-            .addField("** Node **", `**${process.version}**`)	
+            .addField("** Node **", `**${process.version}**`)
             .addField("**PING**", "**PONG**");	
 
         message.channel.send(embed).then(embedMessage =>	

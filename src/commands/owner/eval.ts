@@ -1,11 +1,7 @@
 import { MaytrixXCommand } from "../../domain/MaytrixXCommand";
 import { MaytrixXClient } from "../../domain/MaytrixXClient";
 import { Message, MessageEmbed, MessageAttachment } from "discord.js";
-import { inspect } from "util";
-import { Stream } from "stream";
 import * as TS from "typescript";
-import i18n from "i18n";
-
 class EvalCommand extends MaytrixXCommand
 {
     constructor(client : MaytrixXClient)

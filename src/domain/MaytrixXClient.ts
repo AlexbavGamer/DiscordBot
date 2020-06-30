@@ -464,7 +464,7 @@ export class MaytrixXClient extends Client
                 client.destroy();
 
                 setTimeout(() => {
-                    client.login(process.env.BOT_TOKEN!);
+                    client.login(client.config.token);
                 }, 1000);
             }, 4000, this);
         });
