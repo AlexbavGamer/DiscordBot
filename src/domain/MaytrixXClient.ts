@@ -41,7 +41,7 @@ export class MaytrixXClient extends Client
     private readonly _config : MaytrixXConfig;
     private readonly _commands : Collection<string, MaytrixXCommand>;
     private readonly _aliases : Map<string, string>;
-    private readonly _events : Map<string, MaytrixXEvent>;
+    private readonly _events ?: Map<string, MaytrixXEvent>;
     private readonly _settings : Enmap;
     private readonly _levelCache : Map<string, number>;
     private _queue : Map<string, MusicQueue> = new Map();
@@ -184,7 +184,6 @@ export class MaytrixXClient extends Client
 
     initSystems()
     {
-        start(this);
         setup(this);
     }
 
@@ -239,23 +238,23 @@ export class MaytrixXClient extends Client
 
     constructor(config : MaytrixXConfig)
     {
+
         super();
         start(this);
-        moment.defineLocale("pt-BR", {});
         this.login(config.token!);
-
+        this._config = config;
+        this.fetchApplication().then((app) => {
+            this._application = app;
+        });
         this._commands = loadCommands(this);
         this._aliases = new Map();
         this._currentActivitie = 0;
-        this._config = config;
-        
         this._levelCache = new Map();
         for(let i = 0; i < this.config.permLevels!.length; i++)
         {
             const thisLevel = this.config.permLevels[i];
             this._levelCache.set(thisLevel.name, thisLevel.level);
         }
-
         this._commands.forEach(cmd => 
         {
             if(cmd.conf.permLevel && !(this.levelCache?.has(cmd.conf.permLevel)))
@@ -268,7 +267,6 @@ export class MaytrixXClient extends Client
                 this._aliases.set(alias, cmd.conf.name);
             });
         });
-        this._events = loadEvents(this);
         this.generateInvite("ADMINISTRATOR").then(inviteLink =>
         {
             this._config.inviteLink = inviteLink;
@@ -277,17 +275,20 @@ export class MaytrixXClient extends Client
             name: "settings",
             cloneLevel: "deep",
         });
-        this.getActivities();
-        this._events.forEach((event, name) => {
-            this.on(<any>name,(...args : Array<any>) => {
-                event.run(...args);
+        var currentDyno = <string>process.env.DYNO;
+        if(currentDyno.includes("worker"))
+        {
+            this._events = loadEvents(this);
+            this._events.forEach((event, name) => {
+                this.on(<any>name,(...args : Array<any>) => {
+                    event.run(...args);
+                });
             });
-        });
-
-        this.fetchApplication().then((app) => {
-            this._application = app;
-        });
-
+        } 
+        else if(currentDyno.includes("web"))
+        {
+            setup(this);
+        }
     }
 
     loadCommand(commandName : string)
