@@ -44,6 +44,8 @@ export interface MaytrixXConfig
         domain: string;
         port: string;
     },
+    token : string,
+    mongo : string,
     activitieType?: number | "PLAYING" | "STREAMING" | "LISTENING" | "WATCHING" | "CUSTOM_STATUS" | undefined;
     activitieURL?: string;
     activities?: string[];
