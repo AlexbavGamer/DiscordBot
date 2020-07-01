@@ -94,7 +94,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spravo/typescript-react-express.git"
+    "url": "git+https://github.com/AlexbavGamer/DiscordBot.git"
   },
   "keywords": [
     "react",
@@ -106,7 +106,7 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/spravo/typescript-react-express/issues"
+    "url": "https://github.com/AlexbavGamer/DiscordBot/issues"
   },
-  "homepage": "https://github.com/spravo/typescript-react-express#readme"
+  "homepage": "https://github.com/AlexbavGamer/DiscordBot#readme"
 }
