@@ -41,7 +41,7 @@ export class MaytrixXClient extends Client
     private readonly _config : MaytrixXConfig;
     private readonly _commands : Collection<string, MaytrixXCommand>;
     private readonly _aliases : Map<string, string>;
-    private readonly _events ?: Map<string, MaytrixXEvent>;
+    private readonly _events : Map<string, MaytrixXEvent>;
     private readonly _settings : Enmap;
     private readonly _levelCache : Map<string, number>;
     private _queue : Map<string, MusicQueue> = new Map();
@@ -275,10 +275,10 @@ export class MaytrixXClient extends Client
             name: "settings",
             cloneLevel: "deep",
         });
+        this._events = loadEvents(this);
         var currentDyno = <string>process.env.DYNO;
         if(currentDyno.includes("worker"))
         {
-            this._events = loadEvents(this);
             this._events.forEach((event, name) => {
                 this.on(<any>name,(...args : Array<any>) => {
                     event.run(...args);
