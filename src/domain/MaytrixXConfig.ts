@@ -74,7 +74,7 @@ const config = <MaytrixXConfig>
         callbackURL: (process.env.API_SERVER_EXTERNAL) ? "https://maytrixxbot.glitch.me/calback" : "http://localhost:3000/callback",
         sessionSecret: "Afag2154",
         domain: (process.env.API_SERVER_EXTERNAL) ? "https://maytrixxbot.glitch.me" : "http://localhost:3000/",
-        port: "3000"
+        port: process.env.PORT!
     },
     defaultSettings:
     {
