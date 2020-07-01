@@ -192,7 +192,7 @@ const setup = (client : MaytrixXClient) : Application  => {
     });
 
     passport.use(new Strategy({
-        clientID: client.application.id,
+        clientID: "574277616270311446",
         clientSecret: client.config.dashboard.oauthSecret,
         callbackURL: client.config.dashboard.callbackURL,
         scope: ["identify", "guilds"]
