@@ -39,6 +39,14 @@ declare global
     {
         flat(depth : number) : any[];
     }
+
+    namespace Express
+    {
+        interface Session
+        {
+            [key : string] : any
+        }
+    }
 }
 
 declare module 'discord.js'

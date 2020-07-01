@@ -56,7 +56,7 @@ const setup = (client : MaytrixXClient) : Application  => {
         helpers: {
             getBotAvatar: function()
             {
-                return client.user?.avatarURL();
+                return client.user!.avatarURL();
             },
             getUserAvatar: function(user : User)
             {
@@ -71,32 +71,32 @@ const setup = (client : MaytrixXClient) : Application  => {
             {
                 let pathArray = path.split("/").slice(1);
                 pathArray = pathArray.map(p => {
-                    if(client.guilds.cache.has(p)) return client.guilds.cache.get(p)?.name!;
-                    if(client.users.cache.has(p)) return client.users.cache.get(p)?.username!;
+                    if(client.guilds.cache.has(p)) return client.guilds.cache.get(p)!.name!;
+                    if(client.users.cache.has(p)) return client.users.cache.get(p)!.username!;
                     if(client.channels.cache.has(p)) 
                     {
                         let channel = client.channels.cache.get(p);
-                        if(channel?.type == "text")
+                        if(channel!.type == "text")
                         {
                             return (<TextChannel>channel).name;
                         }
-                        else if(channel?.type == "voice")
+                        else if(channel!.type == "voice")
                         {
                             return (<VoiceChannel>channel).name;
                         }
-                        else if(channel?.type == "group")
+                        else if(channel!.type == "group")
                         {
                             return (<PartialGroupDMChannel>channel).name;
                         }
-                        else if(channel?.type == "news")
+                        else if(channel!.type == "news")
                         {
                             return (<NewsChannel>channel).name;
                         }
-                        else if(channel?.type == "category")
+                        else if(channel!.type == "category")
                         {
                             return (<CategoryChannel>channel).name;
                         }
-                        else if(channel?.type == "dm")
+                        else if(channel!.type == "dm")
                         {
                             return (<DMChannel>channel).recipient.username;
                         }
@@ -126,7 +126,7 @@ const setup = (client : MaytrixXClient) : Application  => {
                 if(client.application.owner instanceof Team)
                 {
                     let team = <Team>client.application.owner;
-                    return client.users.cache.get(team.ownerID!)?.username!;
+                    return client.users.cache.get(team.ownerID!)!.username!;
                 }
                 else if(client.application.owner instanceof User)
                 {
@@ -165,7 +165,7 @@ const setup = (client : MaytrixXClient) : Application  => {
                     throw new Error("Handlerbars Helper 'compare' doesn't know the operator " + operator);
                 }
 
-                result = operators?.get(operator)!(lvalue, rvalue);
+                result = operators!.get(operator)!(lvalue, rvalue);
                 if(result)
                 {
                     return options.fn(this);
@@ -260,11 +260,19 @@ const setup = (client : MaytrixXClient) : Application  => {
     });
 
     app.get("/callback", passport.authenticate("discord", { failureRedirect: "/autherror" }), (req, res) => {
-        client.owners.includes((<any>req?.user!).id) ? req?.session!.isAdmin = true : req?.session!.isAdmin = false;
-        if(req?.session!.backURL)
+        if(client.owners.includes((<any>req!.user!).id))
         {
-            const url = req?.session!.backURL;
-            req?.session!.backURL = null;
+            req!.session!.isAdmin = true;
+        }
+        else
+        {
+            req!.session!.isAdmin = false;
+        }
+
+        if(req!.session!.backURL)
+        {
+            const url = req!.session!.backURL;
+            req!.session!.backURL = null;
             res.redirect(url);
         }
         else
@@ -279,22 +287,22 @@ const setup = (client : MaytrixXClient) : Application  => {
     });
 
     app.get("/login", (req, res, next) => {
-        if (req?.session!.backURL) {
+        if (req!.session!.backURL) {
           next();
         } else if (req.headers.referer) {
-          const parsed = url.parse(req.headers?.referer.toString());
+          const parsed = url.parse(req.headers!.referer.toString());
           if (parsed.hostname === app.locals.domain) {
-            req?.session!.backURL = parsed.path;
+            req!.session!.backURL = parsed.path;
           }
         } else {
-          req?.session!.backURL = "/";
+          req!.session!.backURL = "/";
         }
         next();
       },
       passport.authenticate("discord"));
 
     app.get("/logout", function(req, res) {
-        req?.session!.destroy(() => {
+        req!.session!.destroy(() => {
           req.logout();
           res.redirect("/"); //Inside a callback… bulletproof!
         });
