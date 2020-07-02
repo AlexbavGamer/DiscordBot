@@ -25,6 +25,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha256-zG8v+NWiZxmjNi+CvUYnZwKtHzFtdO8cAKUIdB8+U9I=" crossorigin="anonymous"></script>
   <script src="https://cdn.datatables.net/v/bs4/dt-1.10.16/cr-1.4.1/r-2.2.0/datatables.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
   <link rel='icon' href={{getBotAvatar}} />
   <title>{{> page/title }}</title>
 </head>
@@ -38,14 +39,14 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       
-      <div class="collapse navbar-collapse" id="navbarColor01">
+      <div class="collapse navbar-collapse" id="navbar01">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="/commands">Commands</a></li>
+            <li class="nav-item"><a class="nav-link" href="/commands">Commands</a></li>
           {{#compare bot.application.botPublic "==" true }}
-             <li class="nav-item"><a class="nav-link disabled" href="https://discordapp.com/oauth2/authorize?client_id={{bot.application.id}}&scope=bot&response_type=code&redirect_uri={{getAuthRedirectUri}}">Add to Server</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://discordapp.com/oauth2/authorize?client_id={{bot.application.id}}&scope=bot&response_type=code&redirect_uri={{getAuthRedirectUri}}">Add to Server</a></li>
           {{else}}
-
+            <li class="nav-item"><a class="nav-link disabled">Add to Server</a></li>
           {{/compare}}
           <li class="nav-item"><a class="nav-link" href="/stats">On {{bot.guilds.cache.size}} Servers</a></li>
         </ul>

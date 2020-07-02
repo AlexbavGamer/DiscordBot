@@ -3,6 +3,7 @@ import { MaytrixXClient } from "../domain/MaytrixXClient";
 import { Collection, Team } from "discord.js";
 import { inspect } from "util";
 import { json } from "body-parser";
+import { User } from "discord.js";
 
 class ReadyEvent extends MaytrixXEvent
 {
@@ -22,19 +23,43 @@ class ReadyEvent extends MaytrixXEvent
         `Prefixos: ${this.client.guilds.cache.map((guild) => {
             return this.client.getSettings(guild).prefix
         }).join(", ")}`);
-        let teamApplication = <Team>this.client.application.owner;
-        if(this.client.owners.length < 1) teamApplication ? this.client.owners.push(teamApplication.members.keys()) : this.client.owners.push(this.client.application.owner?.id);
-        setInterval(() => {
+
+        if(this.client.application.owner instanceof Team)
+        {
+            if(this.client.application.owner.members.size < 1)
+            {
+                this.client.owners.push(this.client.application.owner.ownerID!);
+            }
+            else
+            {
+                this.client.owners.push(...this.client.application.owner.members.array().map(m => m.id));
+            }
+            setInterval(() => {
+                this.client.owners = [];
+                if(this.client.application.owner instanceof Team)
+                {
+                    if(this.client.application.owner.members.size > 1)
+                    {
+                        this.client.owners.push(...this.client.application.owner!.members.array().map(m => m.id));
+                    }
+                    else
+                    {
+                     this.client.owners.push(this.client.application.owner!.id);
+                    }
+                }
+            }, 60000);
+        }
+        else if(this.client.application.owner instanceof User)
+        {
             this.client.owners = [];
-            teamApplication ? this.client.owners.push(teamApplication.members.keys()) : this.client.owners.push(this.client.application.owner?.id);
-        }, 60000);
+            this.client.owners.push(this.client.application.owner.id);
+        }
 
         setInterval(() => {
-
             this.client.user?.setActivity({
                 name: this.client.getRandomActivitie(),
                 type: this.client.config.activitieType,
-                url: this.client.config.activitieURL
+                url: this.client.config.activitieURL,
             });
         }, 2500);
 

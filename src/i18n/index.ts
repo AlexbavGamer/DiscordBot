@@ -11,6 +11,7 @@ const start = (client : MaytrixXClient) => {
         locales: locales,
         defaultLocale: "en",
         directory: __dirname + "/locales",
+        /*
         logErrorFn: (msg) => {
             console.log(msg);
         },
@@ -20,6 +21,7 @@ const start = (client : MaytrixXClient) => {
         logWarnFn: (msg) => {
             console.log(msg);
         },
+        */
         autoReload: true,
     });
 

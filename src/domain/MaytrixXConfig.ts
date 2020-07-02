@@ -1,5 +1,6 @@
 import { Message } from "discord.js";
 import { MaytrixXClient } from "./MaytrixXClient";
+import { isUndefined } from "lodash";
 export interface PermLevel
 {
     level: number,
@@ -53,7 +54,13 @@ export interface MaytrixXConfig
     permLevels: PermLevel[]
 }
 
-const config = <MaytrixXConfig>
+function isHerokuInstance()
+{
+    var Dyno = !isUndefined(process.env.DYNO) ?? false;
+    return Dyno;
+}
+
+let config : MaytrixXConfig =
 {
     ownerID: "203936190133436416",
     inviteLink: "",
@@ -71,10 +78,10 @@ const config = <MaytrixXConfig>
     dashboard:
     {
         oauthSecret: "Ka5eH12y0KWK9kst5uSG4RDzcJCQ2lsu",
-        callbackURL: "https://maytrixxbot.herokuapp.com/callback" ,
+        callbackURL: isHerokuInstance() ? "https://maytrixxbot.herokuapp.com/callback" : "http://localhost:{{port}}/callback" ,
         sessionSecret: "Afag2154",
-        domain: "https://maytrixxbot.herokuapp.com/",
-        port: process.env.PORT!
+        domain: isHerokuInstance() ? "https://maytrixxbot.herokuapp.com/" : "http://localhost:{{port}}",
+        port: (isUndefined(process.env.PORT) ? "3000" : process.env.PORT)
     },
     defaultSettings:
     {
@@ -170,11 +177,11 @@ const config = <MaytrixXConfig>
             name: "Bot Owner",
             check: (message, client) =>
             {
-                return client!.config.ownerID == message!.author.id;
+                return client!.config.ownerID == message!.author.id || client?.owners.includes(message!.author.id);
             }
         }
     ]
 };
 
 export default config;
-export { CommandCategoryEmojis };
+export { CommandCategoryEmojis, isHerokuInstance };

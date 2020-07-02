@@ -14,6 +14,8 @@ import "moment-duration-format";
 import { GuildMember, User, Team, TextChannel, VoiceChannel, PartialGroupDMChannel, NewsChannel, CategoryChannel, DMChannel } from "discord.js";
 import moment from "moment";
 const SQLiteStore = require("connect-sqlite3")(session);
+import md from "marked";
+import { isHerokuInstance } from "../domain/MaytrixXConfig";
 
 interface DiscordUser extends Express.User
 {
@@ -134,6 +136,10 @@ const setup = (client : MaytrixXClient) : Application  => {
                     return user.username;
                 }
             },
+            json: function(context : any)
+            {
+                return JSON.stringify(context);
+            },
             compare: function(lvalue : any, operator : string, rvalue : any, options : HelperOptions)
             {
                 var operators : Map<string, Conditional> = new Map(), result : boolean = false;
@@ -194,7 +200,7 @@ const setup = (client : MaytrixXClient) : Application  => {
     passport.use(new Strategy({
         clientID: "574277616270311446",
         clientSecret: client.config.dashboard.oauthSecret,
-        callbackURL: client.config.dashboard.callbackURL,
+        callbackURL: client.formatArgs(client.config.dashboard.callbackURL),
         scope: ["identify", "guilds"]
     }, (accessToken, refreshToken, profile, done) => {
         process.nextTick(() => done(null, profile));
@@ -213,7 +219,7 @@ const setup = (client : MaytrixXClient) : Application  => {
     app.use(passport.session());
     app.use(helmet());
 
-    app.locals.domain = client.config.dashboard.domain;
+    app.locals.domain = client.formatArgs(client.config.dashboard.domain);
 
     function renderTemplate(req : express.Request, res : express.Response, template : string, data ?: {[key : string] : any})
     {
@@ -308,9 +314,15 @@ const setup = (client : MaytrixXClient) : Application  => {
         });
     });
 
+    app.get("/commands", (req, res) => {
+        renderTemplate(req, res, "commands", {md});
+    });
+
     app.get("/stats", (req, res) => {
-        const duration = moment.duration(client.uptime)
+        const duration = client.getUptime();
         const members = client.guilds.cache.reduce((p, c) => p + c.memberCount, 0);
+        const onlineMembers = client.guilds.cache.reduce((p, c) => p + c.members.cache.filter(member => member.presence.status != "offline").size, 0);
+        const offlineMembers = client.guilds.cache.reduce((p, c) => p + c.members.cache.filter(member => member.presence.status == "offline").size, 0);
         const textChannels = client.channels.cache.filter(c => c.type === "text").size;
         const voiceChannels = client.channels.cache.filter(c => c.type === "voice").size;
 
@@ -320,7 +332,11 @@ const setup = (client : MaytrixXClient) : Application  => {
             title: 'Bot Info',
             stats: {
                 servers: guilds,
-                members: members,
+                members: 
+                {
+                    online: onlineMembers,
+                    offline: offlineMembers   
+                },
                 text: textChannels,
                 voice: voiceChannels,
                 uptime: duration,
@@ -358,7 +374,8 @@ const setup = (client : MaytrixXClient) : Application  => {
 
     app.listen(client.config.dashboard.port, (err) => {
         if(err) throw err;
-        console.log(`Listen in ${client.config.dashboard.domain.replace(`:${client.config.dashboard.port}/`, '')}:${client.config.dashboard.port}`);
+        
+        console.log(`Listen in ${client.formatArgs(client.config.dashboard.domain)} with port ${client.config.dashboard.port}`);    
     });
     return app;
 };

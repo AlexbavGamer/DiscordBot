@@ -12,11 +12,12 @@ import lodash = require("lodash");
 import request from "request";
 import * as i18n from "i18n";
 import { setup } from "../dashboard";
-import { start } from "../i18n/start";
 import { Application } from "express";
 import { basename, resolve } from "path";
 import { createWriteStream, existsSync, mkdirSync, unlink } from "fs";
 import { gzip } from "zlib";
+import { isUndefined } from "lodash";
+import { start } from "../i18n";
 
 export interface MusicQueue
 {
@@ -46,7 +47,7 @@ export class MaytrixXClient extends Client
     private readonly _levelCache : Map<string, number>;
     private _queue : Map<string, MusicQueue> = new Map();
 
-    public owners = new Array();
+    public owners = new Array<string>();
 
     public get queue()
     {
@@ -167,7 +168,8 @@ export class MaytrixXClient extends Client
     formatArgs(text : string)
     {
         let result = text.replaceAll("{{prefix}}", this.config.defaultSettings.prefix)
-                         .replaceAll("{{guilds}}", this.guilds.cache.size.toString());
+                         .replaceAll("{{guilds}}", this.guilds.cache.size.toString())
+                         .replaceAll("{{port}}", this.config.dashboard.port);
         return result;
     }
 
@@ -185,6 +187,7 @@ export class MaytrixXClient extends Client
     initSystems()
     {
         setup(this);
+        start(this);
     }
 
     async downloadFile(url : string, dest : string)
@@ -240,7 +243,6 @@ export class MaytrixXClient extends Client
     {
 
         super();
-        start(this);
         this.login(config.token!);
         this._config = config;
         this.fetchApplication().then((app) => {
@@ -277,7 +279,7 @@ export class MaytrixXClient extends Client
         });
         this._events = loadEvents(this);
         var currentDyno = <string>process.env.DYNO;
-        if(currentDyno.includes("worker"))
+        if((!isUndefined(currentDyno) && currentDyno.includes("worker")) || isUndefined(currentDyno))
         {
             this._events.forEach((event, name) => {
                 this.on(<any>name,(...args : Array<any>) => {
