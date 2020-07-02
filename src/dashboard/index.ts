@@ -185,7 +185,7 @@ const setup = (client : MaytrixXClient) : Application  => {
     
 
     app.engine('.hbs', hbs.engine);
-    app.use("/public", express.static(path.join(__dirname, 'public')));
+    app.use("/public", express.static(path.join(__dirname, '/public')));
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', '.hbs');
 
@@ -374,7 +374,7 @@ const setup = (client : MaytrixXClient) : Application  => {
 
     app.listen(client.config.dashboard.port, (err) => {
         if(err) throw err;
-        
+
         console.log(`Listen in ${client.formatArgs(client.config.dashboard.domain)} with port ${client.config.dashboard.port}`);    
     });
     return app;
