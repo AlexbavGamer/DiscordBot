@@ -60,6 +60,10 @@ const setup = (client : MaytrixXClient) : Application  => {
             {
                 return client.user!.avatarURL();
             },
+            getAuthRedirectUri: function()
+            {
+                return encodeURIComponent(client.formatArgs(client.config.dashboard.callbackURL));
+            },
             getUserAvatar: function(user : User)
             {
                 if(arguments.length < 1)
