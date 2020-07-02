@@ -184,6 +184,7 @@ const setup = (client : MaytrixXClient) : Application  => {
 
     
 
+    console.log(`public path: ${path.join(__dirname, '/public')}`);
     app.engine('.hbs', hbs.engine);
     app.use("/public", express.static(path.join(__dirname, '/public')));
     app.set('views', path.join(__dirname, 'views'));
