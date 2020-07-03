@@ -188,7 +188,7 @@ export class MaytrixXClient extends Client
 
     initSystems()
     {
-        setup(this);
+        
     }
 
     async downloadFile(url : string, dest : string)
