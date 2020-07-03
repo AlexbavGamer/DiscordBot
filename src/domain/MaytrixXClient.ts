@@ -245,12 +245,13 @@ export class MaytrixXClient extends Client
 
         super();
         this.login(config.token!);
+        start(this)
         this._config = config;
         this.fetchApplication().then((app) => {
             this._application = app;
             if(isHerokuDyno("WEB"))
             {
-                start(this);
+                setup(this);
             }
         });
         this._commands = loadCommands(this);
@@ -292,10 +293,6 @@ export class MaytrixXClient extends Client
                 });
             });
         } 
-        else if(currentDyno.includes("web"))
-        {
-            setup(this);
-        }
     }
 
     loadCommand(commandName : string)
