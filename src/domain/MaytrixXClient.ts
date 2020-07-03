@@ -244,11 +244,11 @@ export class MaytrixXClient extends Client
     {
 
         super();
-        start(this);
         this.login(config.token!);
         this._config = config;
         this.fetchApplication().then((app) => {
             this._application = app;
+            start(this);
         });
         this._commands = loadCommands(this);
         this._aliases = new Map();
