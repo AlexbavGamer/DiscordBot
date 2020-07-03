@@ -72,7 +72,7 @@ let config : MaytrixXConfig =
     admins: [],
     support: [],
     donators: [],
-    token: "NTc0Mjc3NjE2MjcwMzExNDQ2.Xvi6lA.uGynNInapZLc2680M9ep8V8GOjA",
+    token: "",
     mongo: "mongodb://admin:001998Br@ds231207.mlab.com:31207/discordbot",
     youtubeApi: "AIzaSyB59Xg9vt1nR0GmC311t6W5k1kaPzvbfWk",
     activitieType: "WATCHING",
