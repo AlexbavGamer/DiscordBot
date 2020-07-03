@@ -11,12 +11,16 @@ import { Strategy } from "passport-discord";
 import helmet from "helmet";
 import url from "url";
 import "moment-duration-format";
-import { GuildMember, User, Team, TextChannel, VoiceChannel, PartialGroupDMChannel, NewsChannel, CategoryChannel, DMChannel } from "discord.js";
-import moment from "moment";
 const SQLiteStore = require("connect-sqlite3")(session);
 import md from "marked";
+import ejs from "ejs";
+import bodyParser from "body-parser";
 import { isHerokuInstance } from "../domain/MaytrixXConfig";
-
+import { User } from "discord.js";
+import { type } from "os";
+import { GuildMember } from "discord.js";
+import moment from "moment";
+import { UserManager } from "discord.js";
 interface DiscordUser extends Express.User
 {
     id: string,
@@ -47,152 +51,12 @@ const setup = (client : MaytrixXClient) : Application  => {
 
     let app = express();
 
-    let hbs = exphbs.create({
-        extname: ".hbs",
-        layoutsDir: path.join(__dirname, 'views', 'layouts'),
-        partialsDir: [
-            path.join(__dirname, 'views', 'partials'),
-            path.join(__dirname, 'shared', 'templates'),
-        ],
-        defaultLayout: 'default',
-        helpers: {
-            getBotAvatar: function()
-            {
-                return client.user!.avatarURL();
-            },
-            getAuthRedirectUri: function()
-            {
-                return encodeURIComponent(client.formatArgs(client.config.dashboard.callbackURL));
-            },
-            getUserAvatar: function(user : User)
-            {
-                if(arguments.length < 1)
-                {
-                    throw new Error("Handlerbars Helper 'getUserAvatar' needs 1 parameters");
-                }
-                let avatar = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                return avatar;
-            },
-            renderBreadcrumb: function(path : string)
-            {
-                let pathArray = path.split("/").slice(1);
-                pathArray = pathArray.map(p => {
-                    if(client.guilds.cache.has(p)) return client.guilds.cache.get(p)!.name!;
-                    if(client.users.cache.has(p)) return client.users.cache.get(p)!.username!;
-                    if(client.channels.cache.has(p)) 
-                    {
-                        let channel = client.channels.cache.get(p);
-                        if(channel!.type == "text")
-                        {
-                            return (<TextChannel>channel).name;
-                        }
-                        else if(channel!.type == "voice")
-                        {
-                            return (<VoiceChannel>channel).name;
-                        }
-                        else if(channel!.type == "group")
-                        {
-                            return (<PartialGroupDMChannel>channel).name;
-                        }
-                        else if(channel!.type == "news")
-                        {
-                            return (<NewsChannel>channel).name;
-                        }
-                        else if(channel!.type == "category")
-                        {
-                            return (<CategoryChannel>channel).name;
-                        }
-                        else if(channel!.type == "dm")
-                        {
-                            return (<DMChannel>channel).recipient.username;
-                        }
-                        return "Unkown";
-                    };
-                    return p.toProperCase();
-                });
-                let builtPath = "";
-                let result = "";
-                for(let i = 0; i < pathArray.length; i++) 
-                {
-                    builtPath += "/" + path.split("/").slice(1)[i];
-                    result += `<li class="breadcrumb-item ${((i+1 === pathArray.length) ? "active" : "")}">${((i+1 !== pathArray.length ? `<a href="${builtPath}">${pathArray[i]}</a>` : `<a>${pathArray[i]}</a>`))}</li>`;
-                }
-                return result;
-            },
-            getTeamMebers: function()
-            {
-                if(client.application.owner instanceof Team)
-                {
-                    let team = <Team>client.application.owner;
-                    return team.members.map(member => member.user.username).join(", ");
-                }
-            },
-            getOwnerName: function()
-            {
-                if(client.application.owner instanceof Team)
-                {
-                    let team = <Team>client.application.owner;
-                    return client.users.cache.get(team.ownerID!)!.username!;
-                }
-                else if(client.application.owner instanceof User)
-                {
-                    let user = <User>client.application.owner;
-                    return user.username;
-                }
-            },
-            json: function(context : any)
-            {
-                return JSON.stringify(context);
-            },
-            compare: function(lvalue : any, operator : string, rvalue : any, options : HelperOptions)
-            {
-                var operators : Map<string, Conditional> = new Map(), result : boolean = false;
-
-                if(arguments.length < 3)
-                {
-                    throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
-                }
-
-                if(options === undefined)
-                {
-                    options = rvalue;
-                    rvalue = operator;
-                    operator = "===";
-                }
-
-                operators.set("==", (l, r) => l == r);
-                operators.set("===", (l, r) => l === r);
-                operators.set("!=", (l, r) => l != r);
-                operators.set("!==", (l, r) => l !== r);
-                operators.set("<", (l, r) => l < r);
-                operators.set(">", (l, r) => l > r);
-                operators.set("<=", (l, r) => l <= r);
-                operators.set(">=", (l, r) => l >= r);
-                operators.set("typeof", (l, r) => typeof l == r);
-
-                if(!operators.has(operator))
-                {
-                    throw new Error("Handlerbars Helper 'compare' doesn't know the operator " + operator);
-                }
-
-                result = operators!.get(operator)!(lvalue, rvalue);
-                if(result)
-                {
-                    return options.fn(this);
-                }
-                return options.inverse(this);
-            }
-        },
-        handlebars: allowInsecurePrototypeAccess(handlebars)
-    });
-
+    const dataDir = path.resolve(`${process.cwd()}${path.sep}src${path.sep}dashboard`);
+    const templateDir = path.resolve(`${dataDir}${path.sep}templates`);
     
-
-    console.log(`public path: ${path.join(__dirname, '/public')}`);
-    app.engine('.hbs', hbs.engine);
-    app.use("/public", express.static(path.join(__dirname, '/public')));
-    app.set('views', path.join(__dirname, 'views'));
-    app.set('view engine', '.hbs');
+    app.engine('html', ejs.renderFile);
+    app.use("/public", express.static(path.resolve(`${dataDir}${path.sep}public`)));
+    app.set('view engine', 'html');
 
     //Setup
     passport.serializeUser((user : DiscordUser, done) => {
@@ -203,7 +67,7 @@ const setup = (client : MaytrixXClient) : Application  => {
     });
 
     passport.use(new Strategy({
-        clientID: "574277616270311446",
+        clientID: client.application.id,
         clientSecret: client.config.dashboard.oauthSecret,
         callbackURL: client.formatArgs(client.config.dashboard.callbackURL),
         scope: ["identify", "guilds"]
@@ -225,50 +89,204 @@ const setup = (client : MaytrixXClient) : Application  => {
     app.use(helmet());
 
     app.locals.domain = client.formatArgs(client.config.dashboard.domain);
-
+    app.locals.getUserAvatar = function(user : any)
+    {
+        let id = user.id;
+        var realUser = client.users.cache.has(id) ? client.users.cache.get(id) : null;
+        if(realUser)
+        {
+            return realUser.avatarURL();
+        }
+        return "";
+    }
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+        extended: true
+    })); 
     function renderTemplate(req : express.Request, res : express.Response, template : string, data ?: {[key : string] : any})
     {
         let baseData = {
             bot: client,
             path: req.path,
             user: req.isAuthenticated() ? req.user : null,
-            title: data!.title ?? req.path.split("/")[1].toProperCase(),
+            title: data!.title,
         }
 
-        res.render(template, Object.assign(baseData, data));
+        res.render(path.resolve(`${templateDir}${path.sep}${template}`), Object.assign(baseData, data));
     }
 
-    
-
-    function exposeTemplates(req : express.Request, res : express.Response, next : express.NextFunction)
+    function checkAuth(req : express.Request, res : express.Response, next : express.NextFunction)
     {
-        hbs.getTemplates(path.join(__dirname, 'shared', 'templates'), {
-            cache: app.enabled('view cache'),
-            precompiled: true
-        }).then((templates : any) => {
-            var extRegex = new RegExp(hbs.extname + "$");
-
-            templates = Object.keys(templates).map((name) => {
-                return {
-                    name: name.replace(extRegex, ""),
-                    template: templates[name],
-                }
-            });
-
-            if(templates.length)
-            {
-                res.locals.templates = templates;
-            }
-
-            setImmediate(next);
-        }).catch(next);
+        if(req.isAuthenticated()) return next();
+        req.session!.backURL = req.url;
+        res.redirect("/login");
     }
 
-    app.get("/", exposeTemplates, (req, res) => {
-        renderTemplate(req, res, "index", {
+    app.get("/admin", checkAuth, (req, res) => {
+        if (!req.session!.isAdmin) return res.redirect("/");
+        renderTemplate(req, res, "admin.ejs", {
+            title: "Admin"
+        });
+    });
+
+    app.get("/dashboard/:guildID", checkAuth, (req, res) => {
+        res.redirect(`/dashboard/${req.params.guildID}/manage`);
+    });
+
+    app.get("/dashboard/:guildID/manage", checkAuth, (req, res) => {
+        const guild = client.guilds.cache.get(req.params.guildID);
+        if(!guild) return res.status(404);
+        const isManaged = guild && !!guild.member((<any>req.user!).id) ? guild.member((<any>req.user!).id)?.permissions.has("MANAGE_GUILD") : false;
+        if(!isManaged && !req.session!.isAdmin) res.redirect("/");
+        renderTemplate(req, res, "guild/manage.ejs", {guild}); 
+    });
+
+    app.post("/dashboard/:guildID/manage", checkAuth, (req, res) => {
+        const guild = client.guilds.cache.get(req.params.guildID);
+        if (!guild) return res.status(404);
+        const isManaged = guild && !!guild.member((<any>req.user!).id) ? guild.member((<any>req.user!).id)?.permissions.has("MANAGE_GUILD") : false;
+        if (!isManaged && !req.session!.isAdmin) res.redirect("/");
+        client.writeSettings(guild.id, req.body);
+        res.redirect("/dashboard/"+req.params.guildID+"/manage");
+    });
+
+    app.get("/dashboard/:guildID/members", checkAuth, async (req, res) => {
+        const guild = client.guilds.cache.get(req.params.guildID);
+        if (!guild) return res.status(404);
+        renderTemplate(req, res, "guild/members.ejs", {
+          guild: guild,
+          members: guild.members.cache.array()
+        });
+    });
+
+    app.get("/dashboard/:guildID/members/list", checkAuth, async (req, res) => {
+        const guild = client.guilds.cache.get(req.params!.guildID);
+        if(!guild) return res.status(404);
+        if(req.query.fetch)
+        {
+            await guild.members.fetch();
+        }
+        const totals = guild.members.cache.size;
+        const start = parseInt(req.query!.start.toString(), 10) || 0;
+        const limit = parseInt(req.query!.limit.toString(), 10) || 50;
+
+        let members : any = guild.members.cache;
+        //let members : any[] = guild.members.cache.array();
+
+        if(req.query!.filter && req.query!.filter !== "null")
+        {
+            members = members.filter((m : any) => {
+                m = req.query!.filterUser ? m.user : m;
+                return m["displayName"].toLowerCase().includes(req.query.filter.toString().toLowerCase());
+            });
+        }
+
+        if(req.query!.sortby)
+        {   
+            members = members.sort((a : any, b : any) => 
+            {
+                var sortArray = req.query!.sortby.toString().split(".");
+                if(sortArray.length > 1)
+                {
+                    var resultA = a;
+                    var resultB = b;
+                    sortArray.forEach(sort => {
+                        resultA = resultA[sort];
+                        resultB = resultB[sort];
+                    });
+                    if(resultA < resultB)
+                    {
+                        return 1;
+                    }
+                    else if(resultA > resultB)
+                    {
+                        return -1;
+                    }
+                    return 0;
+                }
+                if(a < b)
+                {
+                    return -1;
+                }
+                else if(a > b)
+                {
+                    return 1;
+                }
+                return 0;
+            })
+        }
+
+        const memberArray = members.array().slice(start, start+limit);
+        const returnObject = [];
+        for (let i = 0; i < memberArray.length; i++) 
+        {
+            const m = memberArray[i];
+            returnObject.push({
+                id: m.id,
+                status: m.user.presence.status,
+                bot: m.user.bot,
+                username: m.user.username,
+                displayName: m.displayName,
+                tag: m.user.tag,
+                discriminator: m.user.discriminator,
+                joinedAt: m.joinedTimestamp,
+                createdAt: m.user.createdTimestamp,
+                highestRole: {
+                hexColor: m.roles.highest.hexColor
+                },
+                memberFor: moment.duration(Date.now() - m.joinedAt!.valueOf()).format(" D [days], H [hrs], m [mins], s [secs]"),
+                roles: m.roles.cache.map((r : any)=>({
+                name: r.name,
+                id: r.id,
+                hexColor: r.hexColor
+                }))
+            });
+        }
+
+        res.json({
+            total: totals,
+            page: (start/limit)+1,
+            pageof: Math.ceil(members.length / limit),
+            members: returnObject
+        });
+    });
+
+    app.get("/", (req, res) => {
+        renderTemplate(req, res, "index.ejs", {
             title: "Home"
         });
     });
+
+    app.get("/dashboard/:guildID/leave", checkAuth, async (req, res) => {
+        const guild = client.guilds.cache.get(req.params.guildID!);
+        if (!guild) return res.status(404);
+        const isManaged = guild && !!guild.member((<any>req.user!).id) ? guild.member((<any>req.user!).id)?.permissions.has("MANAGE_GUILD") : false;
+        if (!isManaged && !req.session!.isAdmin) res.redirect("/");
+        await guild.leave();
+        res.redirect("/dashboard");
+      });
+
+      app.get("/dashboard", checkAuth, (req, res) => {
+        const perms = discord.Permissions;
+        renderTemplate(req, res, "dashboard.ejs", {perms});
+      });
+
+      app.get("/dashboard/:guildID/manage", checkAuth, (req, res) => {
+        const guild = client.guilds.cache.get(req.params.guildID);
+        if (!guild) return res.status(404);
+        const isManaged = guild && !!guild.member((<any>req.user).id) ? guild.member((<any>req.user).id)?.permissions.has("MANAGE_GUILD") : false;
+        if (!isManaged && !req.session!.isAdmin) res.redirect("/");
+        renderTemplate(req, res, "guild/manage.ejs", {guild});
+      });
+
+      app.get("/dashboard/:guildID/reset", checkAuth, async (req, res) => {
+        const guild = client.guilds.cache.get(req.params.guildID);
+        if (!guild) return res.status(404);
+        const isManaged = guild && !!guild.member((<any>req.user!).id) ? guild.member((<any>req.user!).id)?.permissions.has("MANAGE_GUILD") : false;
+        if (!isManaged && !req.session!.isAdmin) res.redirect("/");
+        client.settings.delete(guild.id);
+        res.redirect("/dashboard/"+req.params.guildID);
+      });
 
     app.get("/callback", passport.authenticate("discord", { failureRedirect: "/autherror" }), (req, res) => {
         if(client.owners.includes((<any>req!.user!).id))
@@ -294,7 +312,7 @@ const setup = (client : MaytrixXClient) : Application  => {
 
     app.get("/autherror", (req, res) => 
     {
-        renderTemplate(req, res, "autherror");
+        renderTemplate(req, res, "autherror.ejs");
     });
 
     app.get("/login", (req, res, next) => {
@@ -320,7 +338,7 @@ const setup = (client : MaytrixXClient) : Application  => {
     });
 
     app.get("/commands", (req, res) => {
-        renderTemplate(req, res, "commands", {md});
+        renderTemplate(req, res, "commands.ejs", {md});
     });
 
     app.get("/stats", (req, res) => {
@@ -333,7 +351,7 @@ const setup = (client : MaytrixXClient) : Application  => {
 
         const guilds = client.guilds.cache.size;
 
-        renderTemplate(req, res, "stats", {
+        renderTemplate(req, res, "stats.ejs", {
             title: 'Bot Info',
             stats: {
                 servers: guilds,
@@ -359,9 +377,9 @@ const setup = (client : MaytrixXClient) : Application  => {
 
         if(req.accepts('html'))
         {
-            renderTemplate(req, res, "notfound", 
+            renderTemplate(req, res, "notfound.ejs", 
             {
-                page: req.path.split("/")[1].toProperCase(),
+                page: req.path.split("/")[req.path.split("/").length -1].toProperCase(),
                 title: "Page not found"
             });
             return;

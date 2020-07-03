@@ -37,6 +37,7 @@
     "conf_key_global_value": "\nThis is the default global default value.",
     "conf_key_get_value": "The value of %s is currently %s%s",
     "default_settings": "Bot Default Settings",
+    "default_settings_server": "%s Default Settings",
 
     "no_songs_on_queue": "Sorry %s but not have songs on queue",
     "play_user_no_channel": "You need to be in voice channel to play music!",

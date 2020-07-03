@@ -86,7 +86,12 @@ class GlobalConfCommand extends MaytrixXCommand
         }
         else
         {
-            await message.channel.send(`***__${message.translateGuildText("default_settings")}__***\n\`\`\`json\n${inspect(defaults)}\n\`\`\``);
+            const array : any = [];
+            Object.entries(defaults).forEach(([key, value]) =>
+            {
+                array.push(`${key}${" ".repeat(20 - key.length)}::  ${value}`);
+            });
+            await message.channel.send(`= ${message.translateGuildText("default_settings")} =\n${array.join("\n")}`, {code: "asciidoc"});
         }
     }
 }

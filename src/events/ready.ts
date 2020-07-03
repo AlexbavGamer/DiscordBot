@@ -44,7 +44,7 @@ class ReadyEvent extends MaytrixXEvent
                     }
                     else
                     {
-                     this.client.owners.push(this.client.application.owner!.id);
+                     this.client.owners.push(this.client.application.owner!.ownerID!);
                     }
                 }
             }, 60000);

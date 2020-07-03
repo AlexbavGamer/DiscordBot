@@ -285,6 +285,7 @@ export default
         }
 
         serverQueue.songs = [];
+        serverQueue.playing = false;
         serverQueue.connection!.dispatcher.end();
     },
     Skip(message : Message, serverQueue : MusicQueue)
@@ -313,7 +314,7 @@ export default
 
             let resp = '';
             const videos = data.videos.slice(0, 10);
-
+            console.log(videos.length);
             videos.forEach((_, i) => {
                 resp += `**[${(i + 1)}]:** \`${videos[i].title}\`\n`;
             });

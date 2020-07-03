@@ -93,7 +93,7 @@ class SetConfCommand extends MaytrixXCommand
             {
                 array.push(`${key}${" ".repeat(20 - key.length)}::  ${value}`);
             });
-            await message.channel.send(`= ${message.translateGuildText("default_settings")} =\n${array.join("\n")}`, {code: "asciidoc"});
+            await message.channel.send(`= ${message.translateGuildText("default_settings_server", message.guild?.name)} =\n${array.join("\n")}`, {code: "asciidoc"});
         }
     }
 }

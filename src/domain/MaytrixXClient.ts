@@ -18,6 +18,8 @@ import { createWriteStream, existsSync, mkdirSync, unlink } from "fs";
 import { gzip } from "zlib";
 import { isUndefined } from "lodash";
 import { start } from "../i18n";
+import { Team } from "discord.js";
+import { GuildMember } from "discord.js";
 
 export interface MusicQueue
 {
@@ -187,7 +189,6 @@ export class MaytrixXClient extends Client
     initSystems()
     {
         setup(this);
-        start(this);
     }
 
     async downloadFile(url : string, dest : string)
@@ -243,6 +244,7 @@ export class MaytrixXClient extends Client
     {
 
         super();
+        start(this);
         this.login(config.token!);
         this._config = config;
         this.fetchApplication().then((app) => {
@@ -348,13 +350,14 @@ export class MaytrixXClient extends Client
         }
         if(typeof text !== "string")
         {
-            text = inspect(text, {depth: 0});
+            text = inspect(text, {depth: 1});
         }
         text = (<string>text).replace(/`/g, "`" + String.fromCharCode(8203))
         .replace(/@/g, "@" + String.fromCharCode(8203))
-        .replace(this.token!, "")
-        .replace(this.config.mongo, "")
-        .replace(this.config.youtubeApi, "");
+        .replaceAll(this.token!, "")
+        .replaceAll(this.config.mongo, "")
+        .replaceAll(this.config.youtubeApi, "")
+        .replaceAll(this.config.dashboard.oauthSecret, "");
 
         return text;
     }

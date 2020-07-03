@@ -20,6 +20,7 @@
     "conf_deleted": "%s foi excluído com sucesso.",
     "conf_key_get": "Especifique uma chave para visualizar",
     "default_settings": "Configurações Padrões do Bot",
+    "default_settings_server": "Configurações Padrões do %s",
     "conf_reset_key": "Especifique uma chave para redefinir.",
     "conf_key_cant_override": "Essa chave não possui uma substituição e já está usando padrões.",
     "conf_key_reseted": "todas as configurações foram redefinidas com êxito para o padrão.",
