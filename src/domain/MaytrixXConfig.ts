@@ -86,7 +86,7 @@ let config : MaytrixXConfig =
         callbackURL: isHerokuInstance() ? "https://maytrixxbot.herokuapp.com/callback" : "http://localhost:{{port}}/callback" ,
         sessionSecret: "Afag2154",
         domain: isHerokuInstance() ? "https://maytrixxbot.herokuapp.com/" : "http://localhost:{{port}}",
-        port: (isUndefined(process.env.PORT) ? "3000" : process.env.PORT)
+        port: process.env.PORT! ?? 3000
     },
     defaultSettings:
     {
