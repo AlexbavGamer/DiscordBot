@@ -60,6 +60,11 @@ function isHerokuInstance()
     return Dyno;
 }
 
+function isHerokuDyno(dyno : string)
+{
+    return isHerokuInstance() && process.env.DYNO?.includes(dyno);
+}
+
 let config : MaytrixXConfig =
 {
     ownerID: "203936190133436416",
@@ -184,4 +189,4 @@ let config : MaytrixXConfig =
 };
 
 export default config;
-export { CommandCategoryEmojis, isHerokuInstance };
+export { CommandCategoryEmojis, isHerokuInstance, isHerokuDyno };

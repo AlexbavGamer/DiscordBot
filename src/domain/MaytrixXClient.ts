@@ -1,5 +1,5 @@
 import { Client, ClientEvents, Guild, Message, Collection, ClientApplication, TextChannel, VoiceChannel, VoiceConnection, StreamDispatcher } from "discord.js";
-import { MaytrixXConfig, MaytrixXDefaultSettings } from "./MaytrixXConfig";
+import { MaytrixXConfig, MaytrixXDefaultSettings, isHerokuInstance, isHerokuDyno } from "./MaytrixXConfig";
 import { MaytrixXCommand } from "./MaytrixXCommand";
 import { load as loadCommands } from "./CommandHandler";
 import { load as loadEvents} from "./EventHandler";
@@ -248,7 +248,10 @@ export class MaytrixXClient extends Client
         this._config = config;
         this.fetchApplication().then((app) => {
             this._application = app;
-            start(this);
+            if(isHerokuDyno("WEB"))
+            {
+                start(this);
+            }
         });
         this._commands = loadCommands(this);
         this._aliases = new Map();
