@@ -1,3 +1,5 @@
+if(Number(process.version.slice(1).split(".")[0]) < 8) throw new Error("Node 8.0.0 or higher is required. Update Node in your system");
+
 import { MaytrixXClient } from "./domain/MaytrixXClient";
 import { config as dotenv } from "dotenv";
 import { MaytrixXConfig, MaytrixXDefaultSettings} from "./domain/MaytrixXConfig";

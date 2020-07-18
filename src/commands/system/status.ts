@@ -26,11 +26,12 @@ class UptimeCommand extends MaytrixXCommand
             .addField("** Canais **", `**${this.client.channels.cache.size.toLocaleString()}**`)	
             .addField("** Discord.js **", `**v${version}**`)	
             .addField("** Node **", `**${process.version}**`)
-            .addField("**PING**", "**PONG**");	
+            .addField("** Dashboard **", `**[Click Here](${this.client.formatArgs(this.client.config.dashboard.domain)})**`)
+            .addField("** PING **", "**PONG**");	
 
         message.channel.send(embed).then(embedMessage =>	
         {	
-            embed.fields[embed.fields.length-1].value = `**${(embedMessage.createdTimestamp - message.createdTimestamp)}ms**`;	
+            embed.fields[embed.fields.length-1].value = `**${(embedMessage.createdTimestamp - message.createdTimestamp)}ms. API Latency is ${Math.round(this.client.ws.ping)}ms**`;	
             embedMessage.edit(embed);	
         });	
     }	

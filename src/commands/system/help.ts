@@ -3,6 +3,7 @@ import { MaytrixXClient } from "../../domain/MaytrixXClient";
 import { Message, MessageEmbed, MessageReaction, User } from "discord.js";
 import { inspect } from "util";
 import { CommandCategoryEmojis } from "../../domain/MaytrixXConfig";
+import { Collection } from "discord.js";
 
 class HelpCommand extends MaytrixXCommand
 {
@@ -29,9 +30,9 @@ class HelpCommand extends MaytrixXCommand
             const commandNames = myCommands.map((cmd) => cmd.conf.name);
             const longest = commandNames.reduce((long, str) => Math.max(long, str.length), 0);
 
-            const CommandCategories : Map<string, Array<MaytrixXCommand>> = new Map();
+            const CommandCategories : Collection<string, Array<MaytrixXCommand>> = new Collection();
             const sorted = myCommands.sort((p, c) => p.conf.category > c.conf.category ? 1 : p.conf.name > c.conf.name && p.conf.category == c.conf.category ? 1 : -1);
-            sorted.forEach(c => {
+            await Promise.all(sorted.map(c => {
                 const cat = c.conf.category.toLowerCase();
                 if(!CommandCategories.has(cat))
                 {
@@ -39,35 +40,35 @@ class HelpCommand extends MaytrixXCommand
                 }
 
                 CommandCategories.get(cat)!.push(c);
-            });
+            }));
 
             let embed = new MessageEmbed();
 
             embed.setTitle(`Olá ${message.author.username} para ver os comandos apenas reaja.`);
 
             var desc = '';
-            CommandCategories.forEach((cmds, cat) => 
+            await Promise.all(CommandCategories.map((cmds, cat) => 
             {
                 let emoji = CommandCategoryEmojis[cat];
                 if(emoji)
                 {
                     desc += `${emoji} - ${cat} (${CommandCategories.get(cat)!.length})\n`;
                 }
-            });
+            }));
             desc += '\n\nClique em uma dessas para acessar';
             embed.setDescription(desc);
             const sendMessage = message.channel.send(embed);
 
-            CommandCategories.forEach(async (_, cat) => {
+            await Promise.all(CommandCategories.map(async (_, cat) => {
                 let emoji = CommandCategoryEmojis[cat] ?? CommandCategoryEmojis[cat].toString();
 
                 (await sendMessage).react(emoji);
-            });
+            }));
 
             let map : string[] = [];
-            CommandCategories.forEach((cmds, cat) => {
+            await Promise.all(CommandCategories.map((cmds, cat) => {
                 map.push(CommandCategoryEmojis[cat]);
-            });
+            }));
 
             const filter = (reaction : MessageReaction, user : User) =>
             {

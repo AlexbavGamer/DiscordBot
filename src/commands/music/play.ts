@@ -12,6 +12,7 @@ class PlayCommand extends MaytrixXCommand
             aliases: ["tocar"],
             guildOnly: true,
             dmOnly: false,
+            description: "Play any music from youtube, just paste link",
             permLevel: "User",
             name: "play",
             category: "youtube"

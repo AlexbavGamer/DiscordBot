@@ -19,12 +19,17 @@ export default
             return message.channel.send(message.translateGuildText("play_no_permission"));
         }
 
-        const songInfo = await ytdl.getInfo(`${url}`);
+        const songInfo = await ytdl.getInfo(url);
         const song = {
-            title: songInfo.title,
-            url: songInfo.video_url,
-            description: songInfo.description,
-            thumbnail: songInfo.thumbnail_url,
+            title: songInfo.videoDetails.title,
+            url: songInfo.videoDetails.video_url,
+            description: songInfo.videoDetails.shortDescription,
+            thumbnail: 
+            {
+                url: songInfo.videoDetails.thumbnail.thumbnails[0].url,
+                width: songInfo.videoDetails.thumbnail.thumbnails[0].width,
+                height: songInfo.videoDetails.thumbnail.thumbnails[0].height
+            },
         };
 
         if(!serverQueue)
@@ -81,12 +86,20 @@ export default
             title: string;
             url: string;
             description: string;
-            thumbnail : string;
+            thumbnail : {
+                url: string,
+                width: number,
+                height: number,
+            };
         }>{
             title: args.join(" "),
             url: url,
             description: "Made by [Sound of Text](https://soundoftext.com)",
-            thumbnail: ""
+            thumbnail: {
+                url: "",
+                height: 0,
+                width: 0,
+            }
         };
 
         if(!serverQueue)
@@ -184,10 +197,15 @@ export default
 
         const songInfo = await ytdl.getInfo(args[1]);
         const song = {
-            title: songInfo.title,
-            url: songInfo.video_url,
-            description: songInfo.description,
-            thumbnail: songInfo.thumbnail_url,
+            title: songInfo.videoDetails.title,
+            url: songInfo.videoDetails.video_url,
+            description: songInfo.videoDetails.shortDescription,
+            thumbnail: 
+            {
+                url: songInfo.videoDetails.thumbnail.thumbnails[0].url,
+                width: songInfo.videoDetails.thumbnail.thumbnails[0].width,
+                height: songInfo.videoDetails.thumbnail.thumbnails[0].height,
+            },
         };
 
         if(!serverQueue)
@@ -226,7 +244,7 @@ export default
             return message.channel.send(message.translateGuildText("music_added_queue", song.title));
         }
     },
-    PlayURL(message : Message, guild : Guild, song : { title : string, url : string, description: string, thumbnail : string })
+    PlayURL(message : Message, guild : Guild, song : { title : string, url : string, description: string, thumbnail : { url : string, width: number, height: number} })
     {
         let serverQueue = global.bot.queue.get(guild.id) as MusicQueue;
 
@@ -247,12 +265,11 @@ export default
         let description = `${message.translateGuildText("music_start_playing", song.title)}\n` +
         message.translateGuildText("music_description", song.description);
 
-
         embed.setDescription(description);
 
         serverQueue.textChannel.send(embed);
     },
-    Play(guild : Guild, song : { title : string, url : string, description: string, thumbnail : string })
+    Play(guild : Guild, song : { title : string, url : string, description: string, thumbnail : { url : string, width: number, height: number} })
     {
         const serverQueue = global.bot.queue.get(guild.id) as MusicQueue;
         if(!song)
@@ -262,6 +279,7 @@ export default
             return;
         }
 
+        console.log(`Song URL: ${song.url}`);
         serverQueue.dispatcher = serverQueue.connection!.play(ytdl(song.url)).on('finish', () => {
             serverQueue.songs.shift();
             this.Play(guild, serverQueue.songs[0]);
@@ -272,7 +290,9 @@ export default
             `Description: \n\`\`\`${song.description}\`\`\`\n`;
 
         embed.setDescription(description);
-        embed.setThumbnail(song.thumbnail);
+        embed.setThumbnail(song.thumbnail.url);
+        embed.thumbnail!.height = song.thumbnail.height;
+        embed.thumbnail!.width = song.thumbnail.width;
         serverQueue.textChannel.send(embed);
     },
     Stop(message : Message, serverQueue : MusicQueue)
@@ -314,7 +334,6 @@ export default
 
             let resp = '';
             const videos = data.videos.slice(0, 10);
-            console.log(videos.length);
             videos.forEach((_, i) => {
                 resp += `**[${(i + 1)}]:** \`${videos[i].title}\`\n`;
             });
@@ -334,7 +353,7 @@ export default
             {
                 let video = videos[parseInt(m.content)-1];
 
-                this.ExecuteSearch(video.url, m, serverQueue);
+                this.ExecuteSearch(`${video.url}`, m, serverQueue);
             });
         });
     }

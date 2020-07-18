@@ -12,6 +12,7 @@ export default class ClearCommand extends MaytrixXCommand
             name: "clear",
             category: "admin",
             permLevel: "Administrator",
+            description: "Clears or chats the current text channel.",
             aliases: ["deletar", "limpar"],
             usage: "<limit> @user"
         });

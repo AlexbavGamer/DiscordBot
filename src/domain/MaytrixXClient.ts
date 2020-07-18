@@ -31,7 +31,11 @@ export interface MusicQueue
         title: string;
         url: string;
         description: string;
-        thumbnail : string;
+        thumbnail : {
+            url: string,
+            width: number,
+            height: number,
+        };
     }>,
     volume: number,
     playing: boolean
@@ -245,14 +249,11 @@ export class MaytrixXClient extends Client
 
         super();
         this.login(config.token!);
-        start(this)
+        start(this);
         this._config = config;
         this.fetchApplication().then((app) => {
             this._application = app;
-            if(isHerokuDyno("WEB"))
-            {
-                setup(this);
-            }
+            setup(this);
         });
         this._commands = loadCommands(this);
         this._aliases = new Map();
