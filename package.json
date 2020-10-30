@@ -4,9 +4,9 @@
   "description": "dev/null",
   "main": "src/main",
   "scripts": {
-    "dev": "ts-node-dev --respawn src/main.ts",
-    "start": "ts-node src/main.ts",
-    "buildandrun": "tsc && npm run start",
+    "dev": "npx ts-node-dev --respawn src/main.ts",
+    "start": "npx ts-node src/main.ts",
+    "buildandrun": "npx tsc && npm run start",
     "postinstall": "npm run dev"
   },
   "devDependencies": {
