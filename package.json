@@ -58,7 +58,7 @@
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.15",
     "marked": "^1.0.0",
-    "moment": "^2.25.1",
+    "moment": "^2.29.2",
     "moment-duration-format": "^2.3.2",
     "node": "^14.0.0",
     "node-pre-gyp": "^0.15.0",
